@@ -17,7 +17,7 @@ FEEDS = {
     "Straits Times Singapore": "https://www.straitstimes.com/news/singapore/rss.xml",
 }
 
-MAX_ARTICLES_PER_FEED = 5
+MAX_ARTICLES_PER_FEED = 10
 
 
 def _parse_entry(entry):

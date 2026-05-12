@@ -1,4 +1,4 @@
-TOP_N = 5
+TOP_N = 10
 
 _DIVIDER = "─" * 52
 _HEAVY   = "═" * 52
