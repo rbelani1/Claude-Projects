@@ -1,7 +1,18 @@
+from email.utils import parsedate
+from datetime import datetime
+
 TOP_N = 10
 
 _DIVIDER = "─" * 52
 _HEAVY   = "═" * 52
+
+
+def _format_date(published):
+    try:
+        t = parsedate(published)
+        return datetime(*t[:6]).strftime("%-d %b")
+    except Exception:
+        return ""
 
 
 def print_headlines(feed_results):
@@ -27,8 +38,8 @@ def print_headlines(feed_results):
 
         for i, article in enumerate(articles, start=1):
             title = article["title"] or "Untitled"
-            print(f"  {i}. {title}")
-            if article["published"]:
-                print(f"     {article['published']}")
+            date = _format_date(article["published"]) if article["published"] else ""
+            suffix = f" — {date}" if date else ""
+            print(f"  {i}. {title}{suffix}")
 
     print(f"\n{_HEAVY}\n")
