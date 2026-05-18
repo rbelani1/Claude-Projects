@@ -28,5 +28,7 @@ def print_headlines(feed_results):
         for i, article in enumerate(articles, start=1):
             title = article["title"] or "Untitled"
             print(f"  {i}. {title}")
+            if article["published"]:
+                print(f"     {article['published']}")
 
     print(f"\n{_HEAVY}\n")
