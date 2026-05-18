@@ -10,12 +10,15 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 FEEDS = {
-    "BBC News": "http://feeds.bbci.co.uk/news/rss.xml",
-    "The Economist": "https://www.economist.com/latest/rss.xml",
-    "WSJ": "https://feeds.a.dj.com/rss/RSSWorldNews.xml",
-    "Bloomberg": "https://feeds.bloomberg.com/markets/news.rss",
-    "Business Times Singapore": "https://www.businesstimes.com.sg/rss/breaking-news",
-    "Straits Times Singapore": "https://www.straitstimes.com/news/singapore/rss.xml",
+    "BBC News": ["http://feeds.bbci.co.uk/news/rss.xml"],
+    "The Economist": ["https://www.economist.com/latest/rss.xml"],
+    "WSJ": ["https://feeds.a.dj.com/rss/RSSWorldNews.xml"],
+    "Bloomberg": ["https://feeds.bloomberg.com/markets/news.rss"],
+    "Business Times Singapore": [
+        "https://www.businesstimes.com.sg/rss/singapore",
+        "https://www.businesstimes.com.sg/rss/international",
+    ],
+    "Straits Times Singapore": ["https://www.straitstimes.com/news/singapore/rss.xml"],
 }
 
 MAX_ARTICLES_PER_FEED = 10
@@ -34,34 +37,40 @@ def _parse_entry(entry):
     }
 
 
-def fetch_feed(name, url):
+def fetch_feed(name, urls):
     logger.info("Fetching: %s", name)
-    try:
-        parsed = feedparser.parse(url)
-    except Exception as exc:
-        logger.warning("Failed to fetch '%s' (%s): %s", name, url, exc)
-        return {"source": name, "articles": [], "error": str(exc)}
+    seen = set()
+    articles = []
 
-    # feedparser doesn't raise on network errors — it sets bozo and bozo_exception
-    if parsed.bozo:
-        exc = parsed.get("bozo_exception", "unknown error")
-        # An HTTPError with a 2xx code can still return valid entries; only
-        # warn when there are genuinely no entries to show.
-        if not parsed.entries:
-            logger.warning("Feed '%s' returned no entries (bozo: %s)", name, exc)
-            return {"source": name, "articles": [], "error": str(exc)}
-        logger.warning("Feed '%s' parsed with bozo flag (%s) but returned %d entries",
-                       name, exc, len(parsed.entries))
+    for url in urls:
+        try:
+            parsed = feedparser.parse(url)
+        except Exception as exc:
+            logger.warning("Failed to fetch '%s' (%s): %s", name, url, exc)
+            continue
 
-    articles = [_parse_entry(e) for e in parsed.entries[:MAX_ARTICLES_PER_FEED]]
+        if parsed.bozo and not parsed.entries:
+            exc = parsed.get("bozo_exception", "unknown error")
+            logger.warning("Feed '%s' (%s) returned no entries (bozo: %s)", name, url, exc)
+            continue
+
+        for entry in parsed.entries:
+            link = entry.get("link", "")
+            if link and link in seen:
+                continue
+            seen.add(link)
+            articles.append(_parse_entry(entry))
+
+    articles = articles[:MAX_ARTICLES_PER_FEED]
     logger.info("  Got %d article(s) from %s", len(articles), name)
-    return {"source": name, "articles": articles, "error": None}
+    error = None if articles else "No articles retrieved"
+    return {"source": name, "articles": articles, "error": error}
 
 
 def fetch_all():
     results = []
-    for name, url in FEEDS.items():
-        results.append(fetch_feed(name, url))
+    for name, urls in FEEDS.items():
+        results.append(fetch_feed(name, urls))
 
     failed = [r["source"] for r in results if r["error"]]
     if failed:
