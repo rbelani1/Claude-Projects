@@ -46,6 +46,19 @@ header div.header-left p.timestamp {
     margin-top: 0.35rem;
 }
 
+div.header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.35rem;
+}
+
+p.refreshed {
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
 button.refresh {
     background: transparent;
     border: 1px solid #3b82f6;
@@ -218,9 +231,12 @@ def write_html(feed_results, output_path=OUTPUT_FILE):
     <header>
         <div class="header-left">
             <h1>News Digest</h1>
-            <p class="timestamp">{timestamp} &nbsp;·&nbsp; Last refreshed {refreshed}</p>
+            <p class="timestamp">{timestamp}</p>
         </div>
-        <button class="refresh">↻ Refresh</button>
+        <div class="header-right">
+            <button class="refresh">↻ Refresh</button>
+            <p class="refreshed">Last refreshed {refreshed}</p>
+        </div>
     </header>
     <main>
         {sections}
