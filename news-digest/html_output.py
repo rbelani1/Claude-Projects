@@ -1,5 +1,6 @@
 import html
 from datetime import datetime, timezone
+from email.utils import parsedate
 
 OUTPUT_FILE = "index.html"
 SUMMARY_MAX_CHARS = 280
@@ -118,6 +119,14 @@ def _esc(text):
     return html.escape(text or "")
 
 
+def _format_date(published):
+    try:
+        t = parsedate(published)
+        return datetime(*t[:6]).strftime("%-d %b")
+    except Exception:
+        return ""
+
+
 def _snippet(text, max_chars=SUMMARY_MAX_CHARS):
     clean = " ".join(text.split())
     if len(clean) <= max_chars:
@@ -129,7 +138,7 @@ def _render_article(article):
     title = _esc(article["title"])
     link = _esc(article["link"])
     summary = _esc(_snippet(article["summary"])) if article["summary"] else ""
-    published = _esc(article["published"])
+    published = _format_date(article["published"]) if article["published"] else ""
 
     headline = (
         f'<a class="headline" href="{link}" target="_blank" rel="noopener">{title}</a>'
