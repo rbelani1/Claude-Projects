@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Belani Foundry</title>
+    <style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background: #0f1117;
+    color: #d1d5db;
+    font-family: 'Georgia', serif;
+    font-size: 16px;
+    line-height: 1.7;
+    padding: 2rem 1rem;
+}
+
+/* ── Password overlay ── */
+#lock {
+    position: fixed;
+    inset: 0;
+    background: #0f1117;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    z-index: 999;
+}
+
+#lock h2 {
+    color: #f3f4f6;
+    font-size: 1.4rem;
+    font-weight: normal;
+    letter-spacing: 0.04em;
+}
+
+#lock input {
+    background: #1e2130;
+    border: 1px solid #2d2f3a;
+    color: #f3f4f6;
+    font-size: 1rem;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    width: 240px;
+    text-align: center;
+    outline: none;
+}
+
+#lock input:focus { border-color: #3b82f6; }
+
+#lock button {
+    background: #3b82f6;
+    border: none;
+    color: #fff;
+    font-size: 0.9rem;
+    padding: 0.6rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 240px;
+}
+
+#lock button:hover { background: #2563eb; }
+
+#lock p.error {
+    color: #ef4444;
+    font-size: 0.8rem;
+    font-family: 'Courier New', monospace;
+    min-height: 1em;
+}
+
+/* ── Header ── */
+header {
+    max-width: 860px;
+    margin: 0 auto 2.5rem;
+    border-bottom: 1px solid #2d2f3a;
+    padding-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+header div.header-left h1 {
+    font-size: 1.75rem;
+    font-weight: normal;
+    color: #f3f4f6;
+    letter-spacing: 0.02em;
+}
+
+header div.header-left p.timestamp {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-top: 0.35rem;
+}
+
+div.header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.35rem;
+}
+
+p.refreshed {
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+button.refresh {
+    background: transparent;
+    border: 1px solid #3b82f6;
+    color: #3b82f6;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+}
+
+button.refresh:hover:not(:disabled) {
+    background: #3b82f6;
+    color: #0f1117;
+}
+
+button.refresh:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ── Main content ── */
+main {
+    max-width: 860px;
+    margin: 0 auto;
+}
+
+section.publication {
+    margin-bottom: 3rem;
+}
+
+section.publication h2 {
+    font-size: 0.75rem;
+    font-weight: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #9ca3af;
+    border-left: 3px solid #3b82f6;
+    padding-left: 0.65rem;
+    margin-bottom: 1.25rem;
+}
+
+.error-notice {
+    font-style: italic;
+    color: #ef4444;
+    font-size: 0.875rem;
+    padding-left: 0.65rem;
+}
+
+ul.articles { list-style: none; }
+
+ul.articles li {
+    padding: 1rem 0;
+    border-bottom: 1px solid #1e2130;
+}
+
+ul.articles li:last-child { border-bottom: none; }
+
+a.headline {
+    display: block;
+    font-size: 1.05rem;
+    color: #e5e7eb;
+    text-decoration: none;
+    margin-bottom: 0.3rem;
+    transition: color 0.15s;
+}
+
+a.headline:hover { color: #3b82f6; }
+
+p.summary {
+    font-size: 0.875rem;
+    color: #9ca3af;
+    margin-bottom: 0.3rem;
+}
+
+span.published {
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    color: #4b5563;
+}
+
+footer {
+    max-width: 860px;
+    margin: 3rem auto 0;
+    padding-top: 1rem;
+    border-top: 1px solid #2d2f3a;
+    font-size: 0.75rem;
+    color: #4b5563;
+    text-align: center;
+}
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+    body { padding: 1.25rem 0.85rem; }
+
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    div.header-right {
+        flex-direction: row;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    p.refreshed { font-size: 0.7rem; }
+
+    header div.header-left h1 { font-size: 1.4rem; }
+
+    a.headline { font-size: 0.975rem; }
+
+    p.summary { font-size: 0.825rem; }
+}
+</style>
+</head>
+<body>
+    <div id="lock">
+        <h2>The Belani Foundry</h2>
+        <input id="pw" type="password" placeholder="Enter password" autocomplete="current-password">
+        <button onclick="unlock()">Enter</button>
+        <p class="error" id="pw-error"></p>
+    </div>
+
+    <header>
+        <div class="header-left">
+            <h1>The Belani Foundry</h1>
+            <p class="timestamp">Tuesday, 19 May 2026</p>
+        </div>
+        <div class="header-right">
+            <button class="refresh">↻ Refresh</button>
+            <p class="refreshed">Last refreshed 01:17 SGT</p>
+        </div>
+    </header>
+    <main>
+        
+    <section class="publication">
+        <h2>BBC News</h2>
+        <ul class="articles">
+        <li>
+            <a class="headline" href="https://www.bbc.com/news/articles/cp8pz1k4r2lo?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener">Married at First Sight UK brides tell BBC they were raped by on-screen husbands</a>
+            <p class="summary">Channel 4 was aware of one of the rape claims before broadcast, but the woman involved still featured in the show.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.bbc.com/news/articles/cx21en4807wo?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener">Burnham pledges not to &#x27;re-run&#x27; Brexit arguments</a>
+            <p class="summary">The potential leadership challenger says he is not proposing the UK considers rejoining the EU.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.bbc.com/news/articles/c332mngz25vo?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener">Bodies of missing Italian divers found in Maldives</a>
+            <p class="summary">The bodies of all five Italian divers who died in the Maldives last week have now been found, officials tell the BBC.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.bbc.com/news/articles/ce8pg8ryjkzo?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener">Prince William selling 20% of duchy property for housing and nature projects</a>
+            <p class="summary">The Duchy of Cornwall is to sell part of its 128,000 acre estate and re-invest in more housing.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.bbc.com/news/articles/c626znvne0xo?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener">UK companies linked to payments for small boat crossings, BBC finds</a>
+            <p class="summary">Smugglers are directing migrants to pay using a network of British businesses, secret filming reveals.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.bbc.com/news/articles/cm2p72mmddyo?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener">UK growth forecast upgraded by IMF but risks remain</a>
+            <p class="summary">Growth has been upgraded from 0.8% to 1% for 2026 in the influential body&#x27;s latest forecast.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.bbc.com/news/articles/c9v3jnl4xmyo?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener">Police hunt man after reports teens raped on beach</a>
+            <p class="summary">A search for a suspect is under way as police patrols are increased.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.bbc.com/news/articles/cze2wrk08kko?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener">Tube strikes called off by RMT union</a>
+            <p class="summary">The Rail, Maritime and Transport (RMT) union calls off a series of 24-hour strikes starting on Tuesday.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.bbc.com/news/articles/cr5pz4jvlp5o?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener">Two men arrested over stunt at enclosure of famous monkey Punch</a>
+            <p class="summary">Two US nationals have been arrested after one jumped the fence of the monkey, who went viral online, police say.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.bbc.com/news/articles/cz628le5dn4o?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener">Gunman kills four and injures eight in Turkey, media reports say</a>
+            <p class="summary">A huge police manhunt is now under way after the shootings in southern Turkey.</p>
+            <span class="published">18 May</span>
+        </li>
+        </ul>
+    </section>
+    <section class="publication">
+        <h2>Bloomberg</h2>
+        <ul class="articles">
+        <li>
+            <a class="headline" href="https://www.bloomberg.com/news/articles/2026-05-17/oil-climbs-as-iran-war-shows-no-sign-of-ending-markets-wrap" target="_blank" rel="noopener">Stocks Fall, Oil Rises as Hormuz Deal Hopes Fade: Markets Wrap</a>
+            <p class="summary">Wall Street’s rebound attempt failed, with stocks falling as oil climbed after doubts resurfaced about an imminent US-Iran deal that would revive energy flows through the key Strait of Hormuz.</p>
+            <span class="published">17 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.bloomberg.com/news/articles/2026-05-18/us-futures-slip-as-inflation-worries-feed-risk-off-sentiment" target="_blank" rel="noopener">US Stocks Dip as Investors Eye Inflation, Chips Stocks Retreat</a>
+            <p class="summary">US stocks fell Monday in midday trading as oil prices rebounded amid doubts about the progress of peace talks between the US and Iran. Yields on 10-year Treasuries touched 4.6% and semiconductor stocks traded lower, with sentiment muted and inflation a key concern.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.bloomberg.com/news/articles/2026-05-18/eu-selects-eqt-to-manage-5-billion-technology-fund" target="_blank" rel="noopener">EU Selects EQT to Manage New €5 Billion Technology Fund</a>
+            <p class="summary">EQT AB has won the mandate to manage a new European Union fund for investing in quantum computing, artificial intelligence and other deep tech companies.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.bloomberg.com/news/newsletters/2026-05-18/the-shock-is-dead-long-live-the-shock" target="_blank" rel="noopener">The Shock Is Dead, Long Live the Shock!</a>
+            <p class="summary">Constant disruptions can’t really be labeled as ‘one-offs.’</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.bloomberg.com/news/articles/2026-05-18/spacex-s-mega-ipo-puts-a-price-tag-on-the-fear-of-missing-out" target="_blank" rel="noopener">SpaceX’s Mega-IPO Puts a Price on the Fear of Missing Out</a>
+            <p class="summary">Elon Musk has turned science fiction into reality for the better part of two decades, making believers rich and earning the benefit of the doubt from many on Wall Street. Away from rockets and electric cars, his companies are bending reality on another plane – convincing…</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.bloomberg.com/news/articles/2026-05-18/royal-caribbean-slides-after-mexico-reviews-water-park-project" target="_blank" rel="noopener">Royal Caribbean Slides After Mexico Reviews Water Park Project</a>
+            <p class="summary">Royal Caribbean Cruises Ltd. shares fell on Monday after Mexican President Claudia Sheinbaum ordered a review of the cruise line operator’s water park project in Quintana Roo state.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.bloomberg.com/news/articles/2026-05-18/europe-must-stand-up-for-itself-in-global-economy-germany-says" target="_blank" rel="noopener">Europe Must Stand Up for Itself in Global Economy, Germany Says</a>
+            <p class="summary">German Finance Minister Lars Klingbeil said Europe must assert its own interests against global competitors with measures such as favoring companies from the region.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.bloomberg.com/news/articles/2026-05-18/west-marine-files-bankruptcy-to-cut-debt-close-more-stores" target="_blank" rel="noopener">West Marine Files Bankruptcy to Cut Debt, Close More Stores</a>
+            <p class="summary">Boating supply retailer West Marine Inc. filed for bankruptcy protection, citing weaker sales as consumers pull back on outdoor recreation because of inflation and several years of severe weather.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.bloomberg.com/news/articles/2026-05-18/blue-owl-fund-returns-to-market-with-400-million-bond-offering" target="_blank" rel="noopener">Blue Owl Fund Returns to Market With $400 Million Bond Offering</a>
+            <p class="summary">A Blue Owl Capital Inc. private credit fund is offering a $400 million investment-grade bond, a month after a debt sale to bond giant Pacific Investment Management Co. helped ease capital-access worries.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.bloomberg.com/news/articles/2026-05-18/nextera-to-buy-dominion-for-67-billion-to-form-utility-colossus" target="_blank" rel="noopener">NextEra to Buy Dominion for $67 Billion to Create US Power Giant</a>
+            <p class="summary">NextEra Energy Inc. agreed to pay about $67 billion in stock for Dominion Energy Inc. in the biggest power acquisition ever, creating a giant utility extending from Florida to the artificial intelligence data centers clustered in Virginia.</p>
+            <span class="published">18 May</span>
+        </li>
+        </ul>
+    </section>
+    <section class="publication">
+        <h2>Straits Times Singapore</h2>
+        <ul class="articles">
+        <li>
+            <a class="headline" href="https://www.straitstimes.com/singapore/transport/lease-for-spores-largest-used-car-hub-set-to-be-renewed-till-2040-after-owners-pay-68m" target="_blank" rel="noopener">Lease for S’pore’s largest used-car hub set to be renewed till 2040 after owners pay $68m</a>
+            <p class="summary">The owners of Automobile Megamart still need to submit land survey reports and pay stamp duty.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.straitstimes.com/singapore/environment/unlikely-for-temasek-to-meet-2030-climate-targets-due-to-exposure-to-aviation-and-power-sector-ceo" target="_blank" rel="noopener">Temasek unlikely to meet 2030 climate targets due to exposure to aviation and power sectors: CEO</a>
+            <p class="summary">It aimed to halve emissions from 2010 levels to 11 million tonnes by 2030.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.straitstimes.com/singapore/boy-9-taken-to-hospital-after-accident-with-car-in-choa-chu-kang" target="_blank" rel="noopener">Boy, 9, taken to hospital after accident with car in Choa Chu Kang</a>
+            <p class="summary">Police investigations are ongoing.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.straitstimes.com/singapore/health/businesses-impacted-by-tb-cases-at-block-216-bedok-food-centre-market-may-get-more-reliefs" target="_blank" rel="noopener">Hawker centre in Bedok Central linked to TB clusters undergoes deep cleaning</a>
+            <p class="summary">It will reopen on May 20 after a deep cleaning with disinfectant that can eliminate the TB bacteria.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.straitstimes.com/tech/st-explains-why-is-it-important-for-telcos-to-stay-on-their-approved-radio-frequency-bands" target="_blank" rel="noopener">ST Explains: Why is it important for telcos to stay on their approved radio frequency bands?</a>
+            <p class="summary">Telcos are allowed to use only the spectrum frequency assigned to them.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.straitstimes.com/singapore/courts-crime/illicit-vape-market-in-spore-generated-10-4m-in-revenue-in-2-years-study" target="_blank" rel="noopener">Illicit vape market in Singapore generated $10.4m in revenue in 2 years: Study</a>
+            <p class="summary">The report noted that Singapore was one of the key distribution hubs for illicit cigarettes and e-vapes in the region.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.straitstimes.com/singapore/courts-crime/jail-caning-for-man-caught-with-over-70-sexually-explicit-videos-of-children-including-toddler" target="_blank" rel="noopener">Jail, caning for man caught with over 70 sexually explicit videos of children, including toddler</a>
+            <p class="summary">The videos were found in Emerson Poh Jun Wei&#x27;s devices, including his mobile phone and desktop computer.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.straitstimes.com/singapore/3-shuttle-buses-to-be-rolled-out-during-period-of-late-opening-along-tel" target="_blank" rel="noopener">3 shuttle buses to ply key TEL MRT stations on Saturdays as train services start later</a>
+            <p class="summary">The shuttle bus services will be rolled out on Saturday mornings from May 23 to July 4.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.straitstimes.com/singapore/environment/eight-start-ups-compete-for-funding-awards-totalling-up-to-4m-at-sustainability-challenge-final" target="_blank" rel="noopener">Eight start-ups to compete for funding awards totalling up to $4m at sustainability challenge final</a>
+            <p class="summary">The companies will pitch solutions for tackling carbon emissions and climate adaptation.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.straitstimes.com/singapore/avoid-areas-in-ubi-geylang-due-to-risk-of-flash-floods-pub" target="_blank" rel="noopener">Avoid areas in Ubi, Geylang due to risk of flash floods: PUB</a>
+            <p class="summary">The weatherman had forecast short, thundery showers in the afternoon for the rest of May.</p>
+            <span class="published">18 May</span>
+        </li>
+        </ul>
+    </section>
+    <section class="publication">
+        <h2>WSJ</h2>
+        <ul class="articles">
+        <li>
+            <a class="headline" href="https://www.wsj.com/articles/palestinians-flock-back-to-northern-gaza-on-foot-after-hostage-release-breakthrough-3f60e2db" target="_blank" rel="noopener">Palestinians Stream Back to Northern Gaza on Foot</a>
+            <p class="summary">Israel allowed displaced Gazans to begin crossing a military zone that bisects the enclave after a deadlock over hostage releases was broken.</p>
+            <span class="published">27 Jan</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.wsj.com/articles/even-chinas-property-stalwart-isnt-immune-from-the-crisis-19799863" target="_blank" rel="noopener">Leading China Property Developer Reports Huge loss, in Sign of Widening Real-Estate Woes</a>
+            <p class="summary">Troubles at Vanke raise questions about the continued spread of the property crisis and whether the Chinese state will step in.</p>
+            <span class="published">27 Jan</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.wsj.com/articles/freed-israeli-hostages-still-had-shrapnel-in-their-bodies-from-oct-7-attack-3de8cd1e" target="_blank" rel="noopener">Freed Israeli Hostages Still Had Shrapnel in Their Bodies From Oct. 7 Attack</a>
+            <p class="summary">Some of the women were held alone for extended periods and spent eight months in tunnels, an Israeli medical official said.</p>
+            <span class="published">27 Jan</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.wsj.com/articles/suspected-sabotage-of-deep-sea-cable-triggers-first-nato-led-response-337119ba" target="_blank" rel="noopener">Suspected Sabotage of Deep-Sea Cable Triggers First NATO-Led Response</a>
+            <p class="summary">The alliance mounted its first coordinated response to a suspected sabotage campaign against critical infrastructure after another cable was severed in the Baltic Sea.</p>
+            <span class="published">27 Jan</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.wsj.com/articles/rwanda-backed-rebels-enter-congo-safe-haven-city-aid-hub-09fdccb8" target="_blank" rel="noopener">Rwanda-Backed Rebels Enter Congo&#x27;s Safe-Haven City</a>
+            <p class="summary">Residents of Goma reported gunfire and shelling after rebels overran Congolese troops. U.N. officials estimated that more than one million displaced people were now inside the city.</p>
+            <span class="published">27 Jan</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.wsj.com/articles/cocaine-funded-gangs-shake-colombia-years-after-peace-pact-a45a28da" target="_blank" rel="noopener">Cocaine-Funded Gangs Shake Colombia Years After Peace Pact</a>
+            <p class="summary">Attacks by powerful militias against civilians reflect the state’s inaction eight years after a peace accord removed a powerful rebel group from the field.</p>
+            <span class="published">27 Jan</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.wsj.com/articles/italy-supports-saudi-arabia-joining-gcap-fighter-jet-program-pm-meloni-says-bbd9cec1" target="_blank" rel="noopener">Italy Supports Saudi Arabia Joining Fighter-Jet Program, PM Meloni Says</a>
+            <p class="summary">The U.K., Italy and Japan have already partnered on the Global Combat Air Programme, which aims to put a new stealth fighter with supersonic capability in the skies by 2035.</p>
+            <span class="published">27 Jan</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.wsj.com/articles/shippers-wary-of-red-sea-routes-despite-houthi-pledge-to-end-targeting-4dde35c2" target="_blank" rel="noopener">Shippers Wary of Red Sea Routes Despite Houthi Pledge to End Targeting</a>
+            <p class="summary">The world’s top three container operators said they fear instability in Gaza and broader regional tensions mean continued danger.</p>
+            <span class="published">27 Jan</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.wsj.com/articles/kim-jong-un-is-doing-everything-he-can-to-keep-north-koreas-youth-in-line-0866a1de" target="_blank" rel="noopener">Kim Jong Un Is Doing Everything He Can to Keep North Korea&#x27;s Youth in Line</a>
+            <p class="summary">The dictator, eager to shut out the influence of Hollywood and K-pop, has been exalting a “shock brigade” of 300,000 teens and 20-somethings drafted into flood reconstruction.</p>
+            <span class="published">27 Jan</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.wsj.com/articles/trump-says-colombia-will-face-25-tariffs-amid-fight-over-deportation-flights-e32dc497" target="_blank" rel="noopener">Trump Says Colombia Will Accept Deportees, Ending Tariff Standoff</a>
+            <p class="summary">The president has made immigration an early priority to start second term, with ICE making more than 900 arrests Sunday.</p>
+            <span class="published">26 Jan</span>
+        </li>
+        </ul>
+    </section>
+    <section class="publication">
+        <h2>Business Times Singapore</h2>
+        <ul class="articles">
+        <li>
+            <a class="headline" href="https://www.businesstimes.com.sg/singapore/chinas-nanning-main-gateway-ties-asean-trade-corridor-opens-faster-route-asia-sm-lee" target="_blank" rel="noopener">China’s Nanning ‘main gateway’ for ties with Asean; trade corridor opens faster route to Asia: SM Lee</a>
+            <p class="summary">The Pinglu Canal will span 134.2 km from Hengzhou, under the jurisdiction of Guangxi’s capital</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.businesstimes.com.sg/singapore/daily-debrief-what-happened-today-may-18" target="_blank" rel="noopener">Daily Debrief: What Happened Today (May 18)</a>
+            <p class="summary">Stories you might have missed</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.businesstimes.com.sg/singapore/sbf-enterprisesg-launch-platform-help-firms-strengthen-financial-literacy-resilience" target="_blank" rel="noopener">SBF, EnterpriseSG launch platform to help firms strengthen financial literacy, resilience</a>
+            <p class="summary">The Centre for Enterprise Financing Advisory links companies with partners according to their business needs</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.businesstimes.com.sg/singapore/just-energy-transition-community-puts-us2-6-million-towards-clean-power-cooling-solutions-south-east" target="_blank" rel="noopener">Just Energy Transition Community puts US$2.6 million towards clean power, cooling solutions in South-east Asia</a>
+            <p class="summary">The initiatives will cover workforce development and responsible energy deployment, among others</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.businesstimes.com.sg/singapore/economy-policy/singapore-exports-beat-forecasts-24-5-april-jump-ai-demand-seen-staying-strong" target="_blank" rel="noopener">Singapore exports beat forecasts with 24.5% April jump; AI demand seen staying strong</a>
+            <p class="summary">Last month’s NODX expansion comes on the back of robust artificial intelligence-related demand</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.businesstimes.com.sg/international/trumps-approval-sinks-amid-unpopular-war-darkening-gop-prospects" target="_blank" rel="noopener">Trump’s approval sinks amid unpopular war, darkening GOP prospects</a>
+            <p class="summary">Majority of voters said the war was not worth the costs and held deeply pessimistic views about the economy</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.businesstimes.com.sg/international/trump-dismisses-lawsuit-against-irs-court-filing-shows" target="_blank" rel="noopener">Trump dismisses lawsuit against IRS, court filing shows</a>
+            <p class="summary">[WASHINGTON] US President Donald Trump voluntarily dismissed his US$10 billion lawsuit against the Internal Revenue Service (IRS), according to a Monday (May...</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.businesstimes.com.sg/companies-markets/sp-500-nasdaq-open-higher-chips-rebound-yields-retreat" target="_blank" rel="noopener">S&amp;P 500, Nasdaq open higher as chips rebound, yields retreat</a>
+            <p class="summary">[NEW YORK] The S&amp;amp;P 500 and the Nasdaq opened higher on Monday (May 18) as heavyweight semiconductor stocks recovered, while a bond...</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.businesstimes.com.sg/international/imf-raises-uk-outlook-warns-political-turmoil-could-hurt-growth" target="_blank" rel="noopener">IMF raises UK outlook but warns political turmoil could hurt growth</a>
+            <p class="summary">The IMF said Britain’s economy would grow by 1.0% this year</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.businesstimes.com.sg/international/teslas-musk-expects-widespread-use-cars-without-human-monitors-us-year" target="_blank" rel="noopener">Tesla’s Musk expects widespread use of cars without human monitors in US this year</a>
+            <p class="summary">He says in 10 years, probably 90% of all driving will be done by AI in self-driving cars</p>
+            <span class="published">18 May</span>
+        </li>
+        </ul>
+    </section>
+    <section class="publication">
+        <h2>The Economist</h2>
+        <ul class="articles">
+        <li>
+            <a class="headline" href="https://www.economist.com/middle-east-and-africa/2026/05/18/the-war-room-newsletter-why-the-iran-conflict-may-reignite" target="_blank" rel="noopener">The War Room newsletter: Why the Iran conflict may reignite</a>
+            <p class="summary">Another contest of wills could end just as badly, writes Shashank Joshi, our defence editor</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.economist.com/china/2026/05/18/now-its-vladimir-putins-turn-to-visit-beijing" target="_blank" rel="noopener">Now it’s Vladimir Putin’s turn to visit Beijing</a>
+            <p class="summary">Russia’s leader wants a deal to build a gas pipeline to China</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.economist.com/by-invitation/2026/05/18/how-to-minimise-the-cost-of-a-falling-population" target="_blank" rel="noopener">How to minimise the cost of a falling population</a>
+            <p class="summary">Getting buy-in from older people is the big challenge, writes Shirakawa Masaaki, a former head of Japan’s central bank</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.economist.com/podcasts/2026/05/18/equal-before-the-law-transitional-justice-in-syria" target="_blank" rel="noopener">Equal before the law? Transitional justice in Syria</a>
+            <p class="summary">Also on the daily podcast: our America-at-250 series continues and a curious rise in Chinese whiskymaking</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.economist.com/in-brief/2026/05/18/the-us-in-brief-cassidy-gets-trumped" target="_blank" rel="noopener">The US in Brief: Cassidy gets Trumped</a>
+            <p class="summary">Our daily political update, featuring the stories that matter</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.economist.com/asia/2026/05/18/is-donald-trump-selling-out-taiwan" target="_blank" rel="noopener">Is Donald Trump selling out Taiwan?</a>
+            <p class="summary">He suggests he is bargaining with China over weapons sales to the island</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.economist.com/podcasts/2026/05/18/preparing-for-the-ai-jobs-apocalypse" target="_blank" rel="noopener">Preparing for the AI jobs apocalypse</a>
+            <p class="summary">A handpicked article read aloud from the latest issue of The Economist</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.economist.com/middle-east-and-africa/2026/05/17/is-binyamin-netanyahu-facing-his-last-stand" target="_blank" rel="noopener">Is Binyamin Netanyahu facing his last stand?</a>
+            <p class="summary">The legacy of October 7th and the wars that followed will loom over the campaign</p>
+            <span class="published">17 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.economist.com/business/2026/05/17/ai-super-apps-are-remaking-chinas-internet" target="_blank" rel="noopener">AI super-apps are remaking China’s internet</a>
+            <p class="summary">Welcome to the agentic era</p>
+            <span class="published">17 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.economist.com/graphic-detail/2026/05/17/russia-is-starting-to-lose-ground-in-ukraine" target="_blank" rel="noopener">Russia is starting to lose ground in Ukraine</a>
+            <p class="summary">Our tracker suggests it has suffered its first sustained net loss since October 2023</p>
+            <span class="published">17 May</span>
+        </li>
+        </ul>
+    </section>
+    <section class="publication">
+        <h2>The Mint</h2>
+        <ul class="articles">
+        <li>
+            <a class="headline" href="https://www.livemint.com/news/india/chandranath-rath-killing-cbi-arrests-main-shooter-rajkumar-in-muzaffarnagar-11779123861358.html" target="_blank" rel="noopener">Chandranath Rath killing: CBI arrests ‘main shooter’ Rajkumar in Muzaffarnagar</a>
+            <p class="summary">The CBI reportedly arrested an accused named Rajkumar in connection with the murder case of Chandranath Rath.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.livemint.com/news/india/twisha-sharma-was-on-schizophrenic-drug-confessed-to-consuming-marijuana-mother-in-law-rejects-dowry-claim-11779121075199.html" target="_blank" rel="noopener">Twisha Sharma was on ‘schizophrenic drug, confessed to consuming marijuana’: Mother-in-law rejects dowry claim</a>
+            <p class="summary">Giribala Singh, Twisha&#x27;s mother-in-law, said Twisha had “confessed to consuming large quantities of marijuana when she wanted to reverse her pregnancy…”</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.livemint.com/news/india/fuel-price-hike-reduced-omcs-daily-losses-retail-sales-250-cr-official-sujata-sharma-state-oil-firms-11779114731111.html" target="_blank" rel="noopener">Recent fuel price hike reduced OMCs&#x27; daily losses on retail sales by  ₹250 cr: official</a>
+            <p class="summary">State oil firms have trimmed their combined daily losses to ₹750 crore from ₹1,000 crore after a ₹3-per-litre fuel price hike from Friday, but remain significantly under-recovered.&amp;amp;nbsp;</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.livemint.com/news/world/irans-new-pgsa-to-oversee-strait-of-hormuz-warns-any-passage-without-approval-to-be-treated-illegal-amid-war-11779115920987.html" target="_blank" rel="noopener">Iran&#x27;s new PGSA to oversee Strait of Hormuz warns any passage without approval to be treated ‘illegal’ amid war</a>
+            <p class="summary">Iran&#x27;s Supreme National Security Council announced a new authority to oversee the Strait of Hormuz, issuing real-time updates on waterway activities. The Persian Gulf Strait Authority (PGSA) will manage transit and require full coordination for navigation, warning against…</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.livemint.com/technology/pope-and-co-founder-of-anthropic-to-launch-pontiffs-ai-encyclical-on-may-25-11779104404645.html" target="_blank" rel="noopener">Pope and co-founder of Anthropic to launch pontiffs AI encyclical on May 25</a>
+            <p class="summary">Pope and co-founder of Anthropic to launch pontiff&#x27;s AI encyclical on May 25</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.livemint.com/technology/tech-news/is-your-iphone-ready-for-ios-27-the-biggest-ai-features-expected-at-wwdc-2026-and-rumored-compatible-devices-11779092768803.html" target="_blank" rel="noopener">Is your iPhone ready for iOS 27? The biggest AI features expected at WWDC 2026 and rumored compatible devices</a>
+            <p class="summary">Apple is all set to introduce iOS 27 at WWDC. The new UI is expected to bring a revamped Siri, AI-powered tools in the Photos app and a new extensions system inside Play Store.&amp;amp;nbsp;</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.livemint.com/technology/tech-news/from-aluminium-os-to-gemini-omni-the-biggest-ai-upgrades-expected-at-google-i-o-2026-11779088631880.html" target="_blank" rel="noopener">From Aluminium OS to Gemini Omni: The biggest AI upgrades expected at Google I/O 2026</a>
+            <p class="summary">Google I/O will kick off from Tuesday with a keynote address by Sundar Pichai. The company is expected to showcase major AI upgrades including Gemini 4.0 and Gemini Spark and a new Omni video model.&amp;amp;nbsp;</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.livemint.com/opinion/online-views/indianordic-ties-new-delhi-diversify-strategic-technological-options-norway-modi-summit-11779029276609.html" target="_blank" rel="noopener">India-Nordic ties could help New Delhi diversify its strategic and technological options</a>
+            <p class="summary">The India-Nordic Summit may lack headline-grabbing geopolitical drama, but it speaks of New Delhi’s attempt to acquire new strategic options through partnerships. In a fractured world, that’s what we need.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.livemint.com/opinion/online-views/ford-global-ev-race-energy-storage-electric-vehicles-batteries-catl-power-grid-china-mobilit-11779029190286.html" target="_blank" rel="noopener">Ford no longer looks like an also-ran in the global EV race—it’s just that it has taken an alternate route</a>
+            <p class="summary">Ford’s electric vehicle ambitions may have spluttered so far, but its new energy business could keep the carmaker in play. It is betting heavily on grid batteries that could serve multiple purposes—and keep its electric mobility ambitions alive.</p>
+            <span class="published">18 May</span>
+        </li>
+        <li>
+            <a class="headline" href="https://www.livemint.com/opinion/online-views/india-artificial-intelligence-cost-optimization-ai-foundational-research-frontier-models-profits-11779021724652.html" target="_blank" rel="noopener">India must aim higher: cost optimization must not define the country’s tryst with artificial intelligence</a>
+            <p class="summary">Indian firms have scant incentive to invest in foundational research for artificial intelligence (AI). But the cost of not doing so may be even higher. Indian firms should look beyond quarterly profit-and-loss statements for a longer-term view.</p>
+            <span class="published">18 May</span>
+        </li>
+        </ul>
+    </section>
+    </main>
+    <footer>Generated on Tuesday, 19 May 2026</footer>
+    <script>
+const PASSWORD  = 'Belani123!';
+const GH_TOKEN  = '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';
+const GH_REPO   = 'rbelani1/Claude-Projects';
+const GH_WORKFLOW = 'refresh.yml';
+const GH_BRANCH   = 'claude/create-news-digest-3CqJL';
+
+// ── Password gate ──
+(function() {
+    if (localStorage.getItem('bf_auth') === PASSWORD) {
+        document.getElementById('lock').style.display = 'none';
+        return;
+    }
+    document.getElementById('lock').style.display = 'flex';
+})();
+
+function unlock() {
+    const val = document.getElementById('pw').value;
+    if (val === PASSWORD) {
+        localStorage.setItem('bf_auth', val);
+        document.getElementById('lock').style.display = 'none';
+    } else {
+        document.getElementById('pw-error').textContent = 'Incorrect password.';
+        document.getElementById('pw').value = '';
+        document.getElementById('pw').focus();
+    }
+}
+
+document.getElementById('pw').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') unlock();
+});
+
+// ── Refresh button ──
+async function triggerRefresh() {
+    const btn = document.querySelector('button.refresh');
+    btn.disabled = true;
+
+    try {
+        const res = await fetch(
+            `https://api.github.com/repos/${GH_REPO}/actions/workflows/${GH_WORKFLOW}/dispatches`,
+            {
+                method: 'POST',
+                headers: {
+                    'Authorization': `token ${GH_TOKEN}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ref: GH_BRANCH })
+            }
+        );
+
+        if (!res.ok) {
+            btn.textContent = '↻ Failed — try again';
+            btn.disabled = false;
+            return;
+        }
+    } catch(e) {
+        btn.textContent = '↻ Network error';
+        btn.disabled = false;
+        return;
+    }
+
+    let secs = 45;
+    btn.textContent = `↻ Refreshing ${secs}s`;
+    const timer = setInterval(() => {
+        secs--;
+        btn.textContent = `↻ Refreshing ${secs}s`;
+        if (secs <= 0) {
+            clearInterval(timer);
+            window.location.reload();
+        }
+    }, 1000);
+}
+
+document.querySelector('button.refresh').addEventListener('click', triggerRefresh);
+</script>
+</body>
+</html>
