@@ -27,20 +27,40 @@ header {
     margin: 0 auto 2.5rem;
     border-bottom: 1px solid #2d2f3a;
     padding-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-header h1 {
+header div.header-left h1 {
     font-size: 1.75rem;
     font-weight: normal;
     color: #f3f4f6;
     letter-spacing: 0.02em;
 }
 
-header p.timestamp {
+header div.header-left p.timestamp {
     font-family: 'Courier New', monospace;
     font-size: 0.8rem;
     color: #6b7280;
     margin-top: 0.35rem;
+}
+
+button.refresh {
+    background: transparent;
+    border: 1px solid #3b82f6;
+    color: #3b82f6;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+button.refresh:hover {
+    background: #3b82f6;
+    color: #0f1117;
 }
 
 main {
@@ -193,8 +213,11 @@ def write_html(feed_results, output_path=OUTPUT_FILE):
 </head>
 <body>
     <header>
-        <h1>News Digest</h1>
-        <p class="timestamp">{timestamp}</p>
+        <div class="header-left">
+            <h1>News Digest</h1>
+            <p class="timestamp">{timestamp}</p>
+        </div>
+        <button class="refresh">↻ Refresh</button>
     </header>
     <main>
         {sections}
