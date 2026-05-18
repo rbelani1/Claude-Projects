@@ -25,64 +25,37 @@ body {
 header {
     max-width: 860px;
     margin: 0 auto 2.5rem;
-    padding-bottom: 0;
-    text-align: center;
-}
-
-header .masthead-rules {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.6rem;
-}
-
-header .masthead-rules span {
-    flex: 1;
-    height: 3px;
-    background: linear-gradient(to right, transparent, #f3f4f6, transparent);
-}
-
-header h1 {
-    font-family: 'UnifrakturMaguntia', 'Georgia', serif;
-    font-size: 3.2rem;
-    font-weight: bold;
-    color: #f3f4f6;
-    letter-spacing: 0.04em;
-    line-height: 1;
-    margin-bottom: 0.5rem;
-}
-
-header .masthead-thin {
-    border: none;
-    border-top: 1px solid #4b5563;
-    margin: 0.5rem 0;
-}
-
-header .masthead-bottom {
+    border-bottom: 1px solid #2d2f3a;
+    padding-bottom: 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.5rem 0 0.75rem;
-    border-bottom: 3px double #4b5563;
 }
 
-header p.timestamp {
-    font-family: 'Georgia', serif;
+header div.header-left h1 {
+    font-size: 1.75rem;
+    font-weight: normal;
+    color: #f3f4f6;
+    letter-spacing: 0.02em;
+}
+
+header div.header-left p.timestamp {
+    font-family: 'Courier New', monospace;
     font-size: 0.8rem;
-    color: #9ca3af;
-    font-style: italic;
+    color: #6b7280;
+    margin-top: 0.35rem;
 }
 
 div.header-right {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 0.3rem;
+    gap: 0.35rem;
 }
 
 p.refreshed {
     font-family: 'Courier New', monospace;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: #6b7280;
 }
 
@@ -91,9 +64,9 @@ button.refresh {
     border: 1px solid #3b82f6;
     color: #3b82f6;
     font-family: 'Courier New', monospace;
-    font-size: 0.75rem;
-    padding: 0.3rem 0.8rem;
-    border-radius: 3px;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 4px;
     cursor: pointer;
     white-space: nowrap;
 }
@@ -251,22 +224,18 @@ def write_html(feed_results, output_path=OUTPUT_FILE):
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>News Digest</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+    <title>The Belani Foundry</title>
     <style>{CSS}</style>
 </head>
 <body>
     <header>
-        <div class="masthead-rules"><span></span><span></span></div>
-        <h1>News Digest</h1>
-        <hr class="masthead-thin">
-        <div class="masthead-bottom">
+        <div class="header-left">
+            <h1>The Belani Foundry</h1>
             <p class="timestamp">{timestamp}</p>
-            <div class="header-right">
-                <button class="refresh">↻ Refresh</button>
-                <p class="refreshed">Last refreshed {refreshed}</p>
-            </div>
+        </div>
+        <div class="header-right">
+            <button class="refresh">↻ Refresh</button>
+            <p class="refreshed">Last refreshed {refreshed}</p>
         </div>
     </header>
     <main>
