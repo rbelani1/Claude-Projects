@@ -1,6 +1,6 @@
 import html
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from email.utils import parsedate
 
 
@@ -200,7 +200,10 @@ def _render_section(feed):
 
 
 def write_html(feed_results, output_path=OUTPUT_FILE):
-    timestamp = datetime.now(timezone.utc).strftime("%A, %d %B %Y")
+    sgt = timezone(timedelta(hours=8))
+    now_sgt = datetime.now(sgt)
+    timestamp = now_sgt.strftime("%A, %d %B %Y")
+    refreshed = now_sgt.strftime("%H:%M SGT")
     sections = "".join(_render_section(f) for f in feed_results)
 
     page = f"""<!DOCTYPE html>
@@ -215,7 +218,7 @@ def write_html(feed_results, output_path=OUTPUT_FILE):
     <header>
         <div class="header-left">
             <h1>News Digest</h1>
-            <p class="timestamp">{timestamp}</p>
+            <p class="timestamp">{timestamp} &nbsp;·&nbsp; Last refreshed {refreshed}</p>
         </div>
         <button class="refresh">↻ Refresh</button>
     </header>
