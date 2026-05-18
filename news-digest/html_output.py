@@ -166,7 +166,7 @@ def _render_section(feed):
 
 
 def write_html(feed_results, output_path=OUTPUT_FILE):
-    timestamp = datetime.now(timezone.utc).strftime("%A, %d %B %Y — %H:%M UTC")
+    timestamp = datetime.now(timezone.utc).strftime("%A, %d %B %Y")
     sections = "".join(_render_section(f) for f in feed_results)
 
     page = f"""<!DOCTYPE html>
