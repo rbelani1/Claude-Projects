@@ -13,7 +13,7 @@ FEEDS = {
     "The Economist": "https://www.economist.com/latest/rss.xml",
     "WSJ": "https://feeds.a.dj.com/rss/RSSWorldNews.xml",
     "Bloomberg": "https://feeds.bloomberg.com/markets/news.rss",
-    "Business Times Singapore": "https://www.businesstimes.com.sg/rss/all-news",
+    "Business Times Singapore": "https://www.businesstimes.com.sg/rss/latest-news",
     "Straits Times Singapore": "https://www.straitstimes.com/news/singapore/rss.xml",
 }
 

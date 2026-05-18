@@ -1,6 +1,11 @@
 import html
+import re
 from datetime import datetime, timezone
 from email.utils import parsedate
+
+
+def _strip_tags(text):
+    return re.sub(r"<[^>]+>", "", text or "")
 
 OUTPUT_FILE = "index.html"
 SUMMARY_MAX_CHARS = 280
@@ -137,7 +142,7 @@ def _snippet(text, max_chars=SUMMARY_MAX_CHARS):
 def _render_article(article):
     title = _esc(article["title"])
     link = _esc(article["link"])
-    summary = _esc(_snippet(article["summary"])) if article["summary"] else ""
+    summary = _esc(_snippet(_strip_tags(article["summary"]))) if article["summary"] else ""
     published = _format_date(article["published"]) if article["published"] else ""
 
     headline = (
