@@ -110,38 +110,18 @@ p.refreshed {
     color: #6b7280;
 }
 
-button.refresh {
-    background: transparent;
-    border: 1px solid #3b82f6;
-    color: #3b82f6;
+/* ── Loading spinner ── */
+.loading {
+    color: #4b5563;
     font-family: 'Courier New', monospace;
-    font-size: 0.8rem;
-    padding: 0.4rem 0.9rem;
-    border-radius: 4px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.15s, color 0.15s;
-}
-
-button.refresh:hover:not(:disabled) {
-    background: #3b82f6;
-    color: #0f1117;
-}
-
-button.refresh:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+    font-size: 0.85rem;
+    padding: 1rem 0;
 }
 
 /* ── Main content ── */
-main {
-    max-width: 860px;
-    margin: 0 auto;
-}
+main { max-width: 860px; margin: 0 auto; }
 
-section.publication {
-    margin-bottom: 3rem;
-}
+section.publication { margin-bottom: 3rem; }
 
 section.publication h2 {
     font-size: 0.75rem;
@@ -159,6 +139,7 @@ section.publication h2 {
     color: #ef4444;
     font-size: 0.875rem;
     padding-left: 0.65rem;
+    list-style: none;
 }
 
 ul.articles { list-style: none; }
@@ -221,11 +202,8 @@ footer {
     }
 
     p.refreshed { font-size: 0.7rem; }
-
     header div.header-left h1 { font-size: 1.4rem; }
-
     a.headline { font-size: 0.975rem; }
-
     p.summary { font-size: 0.825rem; }
 }
 </style>
@@ -241,477 +219,166 @@ footer {
     <header>
         <div class="header-left">
             <h1>The Belani Foundry</h1>
-            <p class="timestamp">Tuesday, 19 May 2026</p>
+            <p class="timestamp" id="timestamp">Loading...</p>
         </div>
         <div class="header-right">
-            <button class="refresh">↻ Refresh</button>
-            <p class="refreshed">Last refreshed 23:33 SGT</p>
+            <p class="refreshed" id="refreshed"></p>
         </div>
     </header>
     <main>
-        
-    <section class="publication">
+    <section class="publication" id="feed-BBC-News">
         <h2>BBC News</h2>
-        <ul class="articles">
-        <li>
-            <a class="headline" href="https://www.bbc.com/news/articles/c62xv7n4xwdo?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener">Married at First Sight UK rape allegations serious, says government</a>
-            <p class="summary">A BBC Panorama investigation revealed allegations that two women had been raped during filming.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.bbc.com/news/articles/c0k2d2pl6x0o?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener">Surrey Police investigating child sex abuse allegations after Epstein files release</a>
-            <p class="summary">The force said no arrests have been made in relation to the offences dating back to the 1980s and 1990s.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.bbc.com/news/articles/cgep5ez80rzo?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener">BBC confirms new Strictly Come Dancing hosts</a>
-            <p class="summary">The trio replace Tess Daly and Claudia Winkleman, who left the BBC dance competition last year.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.bbc.com/news/articles/cdep64555wzo?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener">Petrol hits highest price since start of Iran war</a>
-            <p class="summary">The average price of unleaded has risen to 158.52p a litre, according to the RAC, who warn that it could rise further in the coming weeks.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.bbc.com/news/articles/clyp3gkrwg9o?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener">Father-of-eight killed in San Diego mosque shooting hailed as hero</a>
-            <p class="summary">Security guard Amin Abdullah, one of three killed in the attack, was described as &quot;a shining light&quot;.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.bbc.com/news/articles/cz92j3n3jvvo?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener">Victim or enabler? Epstein girlfriend who could face questions despite plea deal</a>
-            <p class="summary">Nadia Marcinko is relatively unknown but may soon be called before US legislators.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.bbc.com/sport/tennis/articles/c87qlqw1nj0o?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener">Two-time winner Alcaraz out of Wimbledon with injury</a>
-            <p class="summary">Two-time winner Carlos Alcaraz will miss this year&#x27;s Wimbledon because of an ongoing wrist injury.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.bbc.com/news/articles/ceqp11gn1l8o?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener">Ebola outbreak may be spreading faster than first thought, WHO doctor warns</a>
-            <p class="summary">Hundreds of cases are suspected in central Africa but experts fear the actual number may be much higher.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.bbc.com/news/articles/c1e24vxyqnwo?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener">Police seek charges for up to 57 people over Grenfell Tower disaster</a>
-            <p class="summary">The Met Police will submit files to the CPS including possible cases of corporate manslaughter.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.bbc.com/news/articles/c0m2pg1z4x8o?at_medium=RSS&amp;at_campaign=rss" target="_blank" rel="noopener">Son of Mango boss arrested over father&#x27;s fatal fall from cliff</a>
-            <p class="summary">Isak, 71, died in December 2024 after falling from a ravine while walking in the Montserrat mountains near Barcelona.</p>
-            <span class="published">19 May</span>
-        </li>
-        </ul>
+        <ul class="articles"><li class="loading">Loading...</li></ul>
     </section>
-    <section class="publication">
+    <section class="publication" id="feed-Bloomberg">
         <h2>Bloomberg</h2>
-        <ul class="articles">
-        <li>
-            <a class="headline" href="https://www.bloomberg.com/news/articles/2026-05-19/record-number-of-borrowers-are-selling-bonds-in-europe-s-market" target="_blank" rel="noopener">Record Number of Borrowers Sell Bonds in Europe’s Market</a>
-            <p class="summary">Borrowers poured into Europe’s bond market at the fastest pace ever, locking in funding before the region’s central bank is likely to hike interest rates.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.bloomberg.com/news/videos/2026-05-19/zak-brown-on-racing-s-triple-crown-video" target="_blank" rel="noopener">Zak Brown On Racing’s Triple Crown</a>
-            <p class="summary">McLaren CEO Zak Brown joined Bloomberg Open Interest to break down the team’s hunt for motorsport’s Triple Crown, why IndyCar still rewards elite driving talent, and how AI is changing Formula 1 strategy in real time. He also weighs in on controversial F1 regulations, fan…</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.bloomberg.com/news/articles/2026-05-19/investor-angst-emerges-in-riskiest-stocks-even-as-ai-trade-flies" target="_blank" rel="noopener">Investor Angst Emerges in Riskiest Stocks on Rate Uncertainty</a>
-            <p class="summary">Investors are starting to hedge the risk of a drop in the Russell 2000 Index of smaller companies, despite investors remaining bullish on large-cap stocks.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.bloomberg.com/news/articles/2026-05-19/kkr-and-ecp-weigh-increasing-offer-for-energy-group-dcc" target="_blank" rel="noopener">KKR and ECP Weigh Increasing Offer for Energy Group DCC</a>
-            <p class="summary">KKR &amp;amp; Co. and Energy Capital Partners are considering raising their offer to acquire energy provider DCC Plc, people with knowledge of the matter said.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.bloomberg.com/news/articles/2026-05-19/ometto-weighs-buying-cosan-farm-assets-instead-of-funding-raizen" target="_blank" rel="noopener">Ometto Weighs Buying Cosan Farm Assets Instead of Funding Raízen</a>
-            <p class="summary">Billionaire Rubens Ometto is considering acquiring part of the farmland portfolio held by Radar, Cosan SA’s land management unit, according to people familiar with the matter, a move that could derail the entrepreneur’s plans to inject fresh capital into Raízen SA.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.bloomberg.com/news/articles/2026-05-18/gold-holds-gain-as-hopes-for-iran-truce-ease-inflation-fears" target="_blank" rel="noopener">Gold Declines as Inflation Fears Fuel Interest Rate Hike Bets</a>
-            <p class="summary">Gold declined as persistent concerns over inflation fueled bets that global central banks may be forced to hike interest rates. Silver slumped to the lowest in nearly two weeks.</p>
-            <span class="published">18 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.bloomberg.com/news/articles/2026-05-18/oil-slips-as-trump-spurs-optimism-over-iran-deal-markets-wrap" target="_blank" rel="noopener">Stocks Hit by Chipmaker Rout as Bond Yields Climb: Markets Wrap</a>
-            <p class="summary">Wall Street’s crowded chipmaker trade continued to unravel, dragging down stocks on speculation that a surge from this year’s lows has gone too far amid war-fueled inflation risks that have sank bonds.</p>
-            <span class="published">18 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.bloomberg.com/news/articles/2026-05-19/tata-s-uk-plant-wins-exemption-from-us-steel-tariff-rules" target="_blank" rel="noopener">Tata’s UK Plant Wins Exemption From US Steel Tariff Rules</a>
-            <p class="summary">Tata Steel UK has secured a US tariff exemption that will allow it to export steel processed in Britain under the lower rate applied to UK shipments, even though the raw material was made overseas.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.bloomberg.com/news/articles/2026-05-19/irish-officials-told-to-probe-suspicious-polymarket-betting" target="_blank" rel="noopener">Irish Officials Told to Probe ‘Suspicious’ Polymarket Betting</a>
-            <p class="summary">Ireland’s Finance Minister Simon Harris has instructed officials to carry out an analysis of how the government should react to the uptick of “suspicious betting” on platforms like Polymarket.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.bloomberg.com/news/articles/2026-05-19/german-gas-storage-to-fill-up-without-aid-market-manager-says" target="_blank" rel="noopener">German Gas Storage to Fill Up Without Aid, Market Manager Says</a>
-            <p class="summary">Germany’s gas market manager reiterated that it will not intervene on behalf of the government to refill the country’s vast storage facilities, saying that levels should start rising soon.</p>
-            <span class="published">19 May</span>
-        </li>
-        </ul>
+        <ul class="articles"><li class="loading">Loading...</li></ul>
     </section>
-    <section class="publication">
+    <section class="publication" id="feed-Straits-Times-Singapore">
         <h2>Straits Times Singapore</h2>
-        <ul class="articles">
-        <li>
-            <a class="headline" href="https://www.straitstimes.com/singapore/environment/first-spore-adaptation-plan-to-identify-risks-and-take-stock-of-current-measures-rather-than-new" target="_blank" rel="noopener">First S’pore climate adaptation plan to take stock of current efforts and identify risks</a>
-            <p class="summary">Climate adaptation is a key area in bolstering ASEAN’s resilience, said minister Grace Fu.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.straitstimes.com/singapore/11-taken-to-hospital-after-accident-involving-9-motorcycles-and-car-on-aye" target="_blank" rel="noopener">11 taken to hospital after accident involving 9 motorcycles and car on AYE</a>
-            <p class="summary">Police investigations are ongoing.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.straitstimes.com/singapore/parenting-education/polytechnic-students-create-ai-chatbot-to-improve-access-to-special-needs-resources-and-support" target="_blank" rel="noopener">Polytechnic students create AI chatbot to improve access to special needs resources and support</a>
-            <p class="summary">Many forms of support exist, but applying for schemes was not easy as info was not easy to find.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.straitstimes.com/singapore/environment/singapores-energy-strategy-has-to-be-more-diversified-forward-looking-pm-wong" target="_blank" rel="noopener">Singapore’s energy strategy has to be more diversified, forward-looking: PM Wong</a>
-            <p class="summary">He noted that the country remains exposed to global supply disruptions as it imports nearly all its energy.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.straitstimes.com/singapore/transport/what-happened-on-the-turbulence-hit-sia-flight-that-left-one-dead-and-79-hurt" target="_blank" rel="noopener">What happened on the turbulence-hit SIA flight that left one dead and 79 hurt?</a>
-            <p class="summary">The timeline of events was recorded in a final report by the Transport Safety Investigation Bureau.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.straitstimes.com/singapore/man-to-be-charged-after-allegedly-stealing-bank-cards-on-flight-from-south-korea-to-spore" target="_blank" rel="noopener">Man to be charged after allegedly stealing bank cards on flight from South Korea to S’pore</a>
-            <p class="summary">The suspect had allegedly taken two bank cards belonging to another passenger on the same flight.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.straitstimes.com/singapore/beware-of-scam-e-mails-on-employment-offences-claiming-to-be-from-mom" target="_blank" rel="noopener">Beware of scam e-mails on employment offences claiming to be from MOM</a>
-            <p class="summary">Victims would receive e-mails informing them that their companies had contravened the Employment Act.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.straitstimes.com/tech/limited-choices-slower-customer-service-among-key-consumer-concerns-amid-telco-restructuring" target="_blank" rel="noopener">Limited choices, slower customer service among key consumer concerns amid telco restructuring</a>
-            <p class="summary">Communicating proactively with consumers is key for restructuring firms to maintain trust, said one expert.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.straitstimes.com/singapore/environment/how-will-spore-be-assessed-on-its-ability-to-make-an-informed-choice-on-deploying-nuclear-energy" target="_blank" rel="noopener">How will S’pore be assessed for its ability to make an informed choice on deploying nuclear energy?</a>
-            <p class="summary">Here’s what you need to know about this assessment by the UN atomic watchdog.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.straitstimes.com/singapore/2-men-to-be-charged-over-alleged-fraudulent-registration-of-corporate-sim-cards" target="_blank" rel="noopener">2 men to be charged over alleged fraudulent registration of corporate SIM cards</a>
-            <p class="summary">The two men were allegedly offered cash rewards for registering over 100 corporate SIM cards.</p>
-            <span class="published">19 May</span>
-        </li>
-        </ul>
+        <ul class="articles"><li class="loading">Loading...</li></ul>
     </section>
-    <section class="publication">
+    <section class="publication" id="feed-WSJ">
         <h2>WSJ</h2>
-        <ul class="articles">
-        <li>
-            <a class="headline" href="https://www.wsj.com/articles/palestinians-flock-back-to-northern-gaza-on-foot-after-hostage-release-breakthrough-3f60e2db" target="_blank" rel="noopener">Palestinians Stream Back to Northern Gaza on Foot</a>
-            <p class="summary">Israel allowed displaced Gazans to begin crossing a military zone that bisects the enclave after a deadlock over hostage releases was broken.</p>
-            <span class="published">27 Jan</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.wsj.com/articles/even-chinas-property-stalwart-isnt-immune-from-the-crisis-19799863" target="_blank" rel="noopener">Leading China Property Developer Reports Huge loss, in Sign of Widening Real-Estate Woes</a>
-            <p class="summary">Troubles at Vanke raise questions about the continued spread of the property crisis and whether the Chinese state will step in.</p>
-            <span class="published">27 Jan</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.wsj.com/articles/freed-israeli-hostages-still-had-shrapnel-in-their-bodies-from-oct-7-attack-3de8cd1e" target="_blank" rel="noopener">Freed Israeli Hostages Still Had Shrapnel in Their Bodies From Oct. 7 Attack</a>
-            <p class="summary">Some of the women were held alone for extended periods and spent eight months in tunnels, an Israeli medical official said.</p>
-            <span class="published">27 Jan</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.wsj.com/articles/suspected-sabotage-of-deep-sea-cable-triggers-first-nato-led-response-337119ba" target="_blank" rel="noopener">Suspected Sabotage of Deep-Sea Cable Triggers First NATO-Led Response</a>
-            <p class="summary">The alliance mounted its first coordinated response to a suspected sabotage campaign against critical infrastructure after another cable was severed in the Baltic Sea.</p>
-            <span class="published">27 Jan</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.wsj.com/articles/rwanda-backed-rebels-enter-congo-safe-haven-city-aid-hub-09fdccb8" target="_blank" rel="noopener">Rwanda-Backed Rebels Enter Congo&#x27;s Safe-Haven City</a>
-            <p class="summary">Residents of Goma reported gunfire and shelling after rebels overran Congolese troops. U.N. officials estimated that more than one million displaced people were now inside the city.</p>
-            <span class="published">27 Jan</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.wsj.com/articles/cocaine-funded-gangs-shake-colombia-years-after-peace-pact-a45a28da" target="_blank" rel="noopener">Cocaine-Funded Gangs Shake Colombia Years After Peace Pact</a>
-            <p class="summary">Attacks by powerful militias against civilians reflect the state’s inaction eight years after a peace accord removed a powerful rebel group from the field.</p>
-            <span class="published">27 Jan</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.wsj.com/articles/italy-supports-saudi-arabia-joining-gcap-fighter-jet-program-pm-meloni-says-bbd9cec1" target="_blank" rel="noopener">Italy Supports Saudi Arabia Joining Fighter-Jet Program, PM Meloni Says</a>
-            <p class="summary">The U.K., Italy and Japan have already partnered on the Global Combat Air Programme, which aims to put a new stealth fighter with supersonic capability in the skies by 2035.</p>
-            <span class="published">27 Jan</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.wsj.com/articles/shippers-wary-of-red-sea-routes-despite-houthi-pledge-to-end-targeting-4dde35c2" target="_blank" rel="noopener">Shippers Wary of Red Sea Routes Despite Houthi Pledge to End Targeting</a>
-            <p class="summary">The world’s top three container operators said they fear instability in Gaza and broader regional tensions mean continued danger.</p>
-            <span class="published">27 Jan</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.wsj.com/articles/kim-jong-un-is-doing-everything-he-can-to-keep-north-koreas-youth-in-line-0866a1de" target="_blank" rel="noopener">Kim Jong Un Is Doing Everything He Can to Keep North Korea&#x27;s Youth in Line</a>
-            <p class="summary">The dictator, eager to shut out the influence of Hollywood and K-pop, has been exalting a “shock brigade” of 300,000 teens and 20-somethings drafted into flood reconstruction.</p>
-            <span class="published">27 Jan</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.wsj.com/articles/trump-says-colombia-will-face-25-tariffs-amid-fight-over-deportation-flights-e32dc497" target="_blank" rel="noopener">Trump Says Colombia Will Accept Deportees, Ending Tariff Standoff</a>
-            <p class="summary">The president has made immigration an early priority to start second term, with ICE making more than 900 arrests Sunday.</p>
-            <span class="published">26 Jan</span>
-        </li>
-        </ul>
+        <ul class="articles"><li class="loading">Loading...</li></ul>
     </section>
-    <section class="publication">
+    <section class="publication" id="feed-Business-Times-Singapore">
         <h2>Business Times Singapore</h2>
-        <ul class="articles">
-        <li>
-            <a class="headline" href="https://www.businesstimes.com.sg/international/global/china-trade-corridor-good-foundation-do-more-bilateral-cooperation-not-sure-win-wins-sm-lee" target="_blank" rel="noopener">China trade corridor a good foundation to do more, as bilateral cooperation not sure ‘win-wins’: SM Lee</a>
-            <p class="summary">He adds trade is now mixed up with security and rivalry considerations, among others, with more effort needed for positive outcomes</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.businesstimes.com.sg/singapore/economy-policy/nuclear-power-singapore-undertake-iaea-review-decision-making-ability" target="_blank" rel="noopener">Nuclear power: Singapore to undertake IAEA review on decision-making ability</a>
-            <p class="summary">Safety will always be the ‘overriding’ priority in Singapore’s consideration of nuclear power, says PM Wong</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.businesstimes.com.sg/esg/singapores-first-climate-adaptation-plan-offer-climate-risk-checklist-businesses-grace-fu" target="_blank" rel="noopener">Singapore’s first climate adaptation plan to offer climate risk ‘checklist’ for businesses: Grace Fu</a>
-            <p class="summary">It will identify gaps in national resilience efforts, help firms assess risks across operations</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.businesstimes.com.sg/singapore/daily-debrief-what-happened-today-may-191" target="_blank" rel="noopener">Daily Debrief: What Happened Today (May 19)</a>
-            <p class="summary">Stories you might have missed</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.businesstimes.com.sg/companies-markets/undergrads-get-hands-ai-finance-training-sector-offer-over-1000-internships-traineeships" target="_blank" rel="noopener">Undergrads to get hands-on AI finance training; sector to offer over 1,000 internships, traineeships</a>
-            <p class="summary">Young Talent Programme for AI in Finance is part of a broader push by MAS and IBF to expand talent pathways</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.businesstimes.com.sg/international/uk-explores-invite-only-investor-visa-ps5-million-cost" target="_blank" rel="noopener">UK explores ‘invite-only’ investor visa with £5 million cost</a>
-            <p class="summary">THE UK is weighing a new visa that would give three years of residency to wealthy individuals investing at least £5 million...</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.businesstimes.com.sg/international/g7-finance-ministers-agree-need-action-economic-imbalances" target="_blank" rel="noopener">G7 finance ministers agree need for action on economic imbalances</a>
-            <p class="summary">[PARIS] G7 finance ministers agreed on Tuesday on the need for action to tackle trade imbalances in a fragmented global economy, saying...</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.businesstimes.com.sg/companies-markets/sp-500-and-nasdaq-open-lower-chip-stocks-drag-inflation-fears-persist" target="_blank" rel="noopener">S&amp;P 500 and Nasdaq open lower as chip stocks drag, inflation fears persist</a>
-            <p class="summary">[NEW YORK] The S&amp;amp;P 500 and the Nasdaq opened lower on Tuesday (May 19), pressured by a selloff in heavyweight chip stocks...</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.businesstimes.com.sg/international/test-shortages-slow-fight-against-ebola-congo" target="_blank" rel="noopener">Test shortages slow fight against Ebola in Congo</a>
-            <p class="summary">There are at least 500 suspected cases and 130 suspected deaths from Ebola</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.businesstimes.com.sg/international/indian-airlines-plead-oil-majors-postpone-jet-fuel-hikes" target="_blank" rel="noopener">Indian airlines plead with oil majors to postpone jet-fuel hikes</a>
-            <p class="summary">Their proposal is under consideration by the refiners, sources say</p>
-            <span class="published">19 May</span>
-        </li>
-        </ul>
+        <ul class="articles"><li class="loading">Loading...</li></ul>
     </section>
-    <section class="publication">
+    <section class="publication" id="feed-The-Economist">
         <h2>The Economist</h2>
-        <ul class="articles">
-        <li>
-            <a class="headline" href="https://www.economist.com/united-states/2026/05/19/the-democrats-have-a-chance-to-win-the-senate-will-they-blow-it" target="_blank" rel="noopener">The Democrats have a chance to win the Senate. Will they blow it?</a>
-            <p class="summary">Much depends on what happens in places like Michigan</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.economist.com/science-and-technology/2026/05/19/japanese-eels-have-two-types-of-sperm" target="_blank" rel="noopener">Japanese eels have two types of sperm</a>
-            <p class="summary">Understanding why could help boost their numbers</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.economist.com/podcasts/2026/05/19/spread-too-thin-africas-next-ebola-outbreak" target="_blank" rel="noopener">Spread too thin: Africa’s next Ebola outbreak</a>
-            <p class="summary">Also on the daily podcast: the polling favourite for Britain’s next prime minister and the irritating world of celebrity book clubs</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.economist.com/by-invitation/2026/05/19/turkeys-struggle-for-democracy-is-like-hungarys-but-harder" target="_blank" rel="noopener">Turkey’s struggle for democracy is like Hungary’s, but harder</a>
-            <p class="summary">If it succeeds, though, it will resonate more widely, writes Ozgur Ozel, the opposition leader</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.economist.com/in-brief/2026/05/19/the-us-in-brief-friends-with-benefits" target="_blank" rel="noopener">The US in Brief: Friends with benefits</a>
-            <p class="summary">Our daily political update, featuring the stories that matter</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.economist.com/united-states/2026/05/19/even-by-trumpian-standards-a-18bn-fund-for-friends-is-bad" target="_blank" rel="noopener">Even by Trumpian standards, a $1.8bn fund for friends is bad</a>
-            <p class="summary">The president threatened to sue his own administration, and will hand out the pay-off</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.economist.com/podcasts/2026/05/19/how-the-energy-shock-is-changing-asia" target="_blank" rel="noopener">How the energy shock is changing Asia</a>
-            <p class="summary">A handpicked article read aloud from the latest issue of The Economist</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.economist.com/europe/2026/05/18/who-are-europes-newest-troublemakers" target="_blank" rel="noopener">Who are Europe’s newest troublemakers?</a>
-            <p class="summary">Corruption and inflation are boosting eurosceptic populists</p>
-            <span class="published">18 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.economist.com/finance-and-economics/2026/05/18/where-expat-escapees-from-dubai-end-up" target="_blank" rel="noopener">Where expat escapees from Dubai end up</a>
-            <p class="summary">Will they ever return?</p>
-            <span class="published">18 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.economist.com/finance-and-economics/2026/05/18/how-much-is-donald-trump-costing-americas-economy" target="_blank" rel="noopener">How much is Donald Trump costing America’s economy?</a>
-            <p class="summary">We calculate the drag on growth from fitful presidential policymaking</p>
-            <span class="published">18 May</span>
-        </li>
-        </ul>
+        <ul class="articles"><li class="loading">Loading...</li></ul>
     </section>
-    <section class="publication">
+    <section class="publication" id="feed-The-Mint">
         <h2>The Mint</h2>
-        <ul class="articles">
-        <li>
-            <a class="headline" href="https://www.livemint.com/news/us-news/affordable-care-act-enrollment-could-drop-by-nearly-6-million-in-2026-report-warns-here-s-why-11779202486666.html" target="_blank" rel="noopener">Affordable Care Act enrollment could drop by nearly 6 million in 2026, report warns — Here’s why</a>
-            <p class="summary">According to estimates based on data from the Wakely Consulting Group and federal Marketplace reports, average effectuated enrollment — referring to consumers who actually pay premiums and maintain active coverage — could fall to around 17.5 million in 2026, down from 22.3…</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.livemint.com/news/us-news/quote-of-the-day-19-may-2026-the-alchemist-writer-paulo-coelho-11779201576156.html" target="_blank" rel="noopener">Quote of the Day by The Alchemist writer Paulo Coelho: ‘Every blessing ignored becomes a curse…’</a>
-            <p class="summary">Paulo Coelho&#x27;s wisdom reminds us that blessings can be overlooked, leading them to become&#x27; curses. Acknowledging our current blessings is essential to avoid future regrets. His narratives stress the importance of attention and recognition in our lives.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.livemint.com/news/trends/noidabased-ceo-says-he-fired-senior-employee-for-asking-what-to-do-next-internet-questions-his-leadership-style-11779199731388.html" target="_blank" rel="noopener">Noida-based CEO says he fired senior employee for asking ‘what to do next’; internet questions his leadership style</a>
-            <p class="summary">The Noida-based further argued that freedom at work without personal initiative often leads to confusion instead of meaningful results.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.livemint.com/news/world/taiwan-election-candidate-lee-hung-yis-billboard-showing-turbaned-man-upside-down-indian-flag-sparks-backlash-11779197353581.html" target="_blank" rel="noopener">Taiwan election candidate Lee Hung-yi&#x27;s billboard showing turbaned man, upside-down Indian flag sparks backlash</a>
-            <p class="summary">Lee Hung-yi&#x27;s campaign billboard featuring a turbaned man and an inverted Indian flag has sparked backlash, reflecting opposition to Taiwan&#x27;s policy on Indian migrant workers. Critics claim it promotes racial discrimination, amid debates about safety concerns related to Indian…</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.livemint.com/technology/tech-news/google-io-2026-live-updates-sundar-pichai-keynote-gemini-ai-android-xr-launches-announcements-highlights-19-may-2026-11779199501541.html" target="_blank" rel="noopener">Google I/O 2026 LIVE Updates: Sundar Pichai keynote today; Gemini AI, Android XR, Search updates expected</a>
-            <p class="summary">Google I/O 2026 will kick off tonight with Sundar Pichai’s keynote, where Google is expected to reveal major updates around Gemini AI, Android, Search, Android XR and developer tools. Follow live updates, announcements, launch details and India timings here.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.livemint.com/technology/tech-news/from-ios-27-to-a-glowing-siri-makeover-biggest-reveals-expected-at-tim-cooks-final-wwdc-as-ceo-11779193386152.html" target="_blank" rel="noopener">From iOS 27 to a glowing Siri makeover: Biggest reveals expected at Tim Cook&#x27;s final WWDC as CEO</a>
-            <p class="summary">iOS 27 will likely debut at WWDC 2026 along with other Apple operating sytems. The tech giant is also expected to reveal a brand new Siri, an Extensions system and upgrades to visual intelligence.&amp;amp;nbsp;</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.livemint.com/technology/microsofts-biggest-india-data-center-on-track-to-go-live-in-mid-2026-executive-says-11779195079165.html" target="_blank" rel="noopener">Microsofts biggest India data center on track to go live in mid-2026, executive says</a>
-            <p class="summary">INDIA-SUMMIT/MICROSOFT (PIX):Microsoft&#x27;s biggest India data center on track to go live in mid-2026, executive says</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.livemint.com/opinion/online-views/remote-work-advantages-work-from-home-social-life-loneliness-wfh-fuel-austerity-11779106105413.html" target="_blank" rel="noopener">Remote work has its advantages, no doubt, but it’s the cons that demand serious thought</a>
-            <p class="summary">Working from home may conserve fuel amid a short-term crisis, but it’s unsustainable beyond a point. Remember, work has always been an inherently social human activity and WFH can’t be sustained without taking that into account.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.livemint.com/opinion/online-views/trump-china-ticket-boeing-us-aircraft-comac-aviation-airbus-aircraft-shortage-11779106034796.html" target="_blank" rel="noopener">Long-haul: Trump’s China ticket for Boeing won’t do much for the US aircraft maker</a>
-            <p class="summary">The American plane-maker is returning to the Chinese aviation market after nine years, but don’t overhype the deal that’s letting it in. It’s lucky that aircraft are in short supply globally, but in China, it must reckon with the ambitions of state-run Comac.</p>
-            <span class="published">19 May</span>
-        </li>
-        <li>
-            <a class="headline" href="https://www.livemint.com/opinion/online-views/gold-buying-investment-purposes-imports-bullion-etfs-sovereign-bonds-wealth-demand-11779105948162.html" target="_blank" rel="noopener">Gold buying for investment purposes also makes it easier to reduce imports of actual bullion</a>
-            <p class="summary">Indians buy gold both as a fallback and a way to multiply wealth. The recent surge in demand for gold, however, can be tempered more easily if investment is the goal—as data suggests it increasingly is. Non-physical options can click.</p>
-            <span class="published">19 May</span>
-        </li>
-        </ul>
+        <ul class="articles"><li class="loading">Loading...</li></ul>
     </section>
     </main>
-    <footer>Generated on Tuesday, 19 May 2026</footer>
+    <footer>The Belani Foundry</footer>
+
     <script>
-const PASSWORD  = 'Belani123!';
-const GH_TOKEN  = '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';
-const GH_REPO   = 'rbelani1/Claude-Projects';
-const GH_WORKFLOW = 'refresh.yml';
-const GH_BRANCH   = 'claude/create-news-digest-3CqJL';
+    const PASSWORD = "Belani123!";
+    const FEEDS    = [{"name": "BBC News", "urls": [{"url": "https://feeds.bbci.co.uk/news/rss.xml", "quota": 10}]}, {"name": "Bloomberg", "urls": [{"url": "https://feeds.bloomberg.com/markets/news.rss", "quota": 10}]}, {"name": "Straits Times Singapore", "urls": [{"url": "https://www.straitstimes.com/news/singapore/rss.xml", "quota": 10}]}, {"name": "WSJ", "urls": [{"url": "https://feeds.a.dj.com/rss/RSSWorldNews.xml", "quota": 10}]}, {"name": "Business Times Singapore", "urls": [{"url": "https://www.businesstimes.com.sg/rss/singapore", "quota": 5}, {"url": "https://www.businesstimes.com.sg/rss/international", "quota": 5}]}, {"name": "The Economist", "urls": [{"url": "https://www.economist.com/latest/rss.xml", "quota": 10}]}, {"name": "The Mint", "urls": [{"url": "https://www.livemint.com/rss/news", "quota": 4}, {"url": "https://www.livemint.com/rss/technology", "quota": 3}, {"url": "https://www.livemint.com/rss/opinion", "quota": 3}]}];
+    const PROXY    = "https://corsproxy.io/?url=";
+    const SUMMARY_MAX = 280;
 
-// ── Password gate ──
-(function() {
-    if (localStorage.getItem('bf_auth') === PASSWORD) {
-        document.getElementById('lock').style.display = 'none';
-        return;
+    // ── Password gate ──
+    (function() {
+        if (localStorage.getItem("bf_auth") === PASSWORD) {
+            document.getElementById("lock").style.display = "none";
+            loadFeeds();
+        }
+    })();
+
+    function unlock() {
+        const val = document.getElementById("pw").value;
+        if (val === PASSWORD) {
+            localStorage.setItem("bf_auth", val);
+            document.getElementById("lock").style.display = "none";
+            loadFeeds();
+        } else {
+            document.getElementById("pw-error").textContent = "Incorrect password.";
+            document.getElementById("pw").value = "";
+            document.getElementById("pw").focus();
+        }
     }
-    document.getElementById('lock').style.display = 'flex';
-})();
 
-function unlock() {
-    const val = document.getElementById('pw').value;
-    if (val === PASSWORD) {
-        localStorage.setItem('bf_auth', val);
-        document.getElementById('lock').style.display = 'none';
-    } else {
-        document.getElementById('pw-error').textContent = 'Incorrect password.';
-        document.getElementById('pw').value = '';
-        document.getElementById('pw').focus();
+    document.getElementById("pw").addEventListener("keydown", e => {
+        if (e.key === "Enter") unlock();
+    });
+
+    // ── Helpers ──
+    function stripTags(str) {
+        const d = document.createElement("div");
+        d.innerHTML = str || "";
+        return d.textContent || d.innerText || "";
     }
-}
 
-document.getElementById('pw').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') unlock();
-});
+    function snippet(str) {
+        const clean = stripTags(str).replace(/\s+/g, " ").trim();
+        if (clean.length <= SUMMARY_MAX) return clean;
+        return clean.slice(0, SUMMARY_MAX).replace(/\s+\S*$/, "") + "\u2026";
+    }
 
-// ── Refresh button ──
-async function triggerRefresh() {
-    const btn = document.querySelector('button.refresh');
-    btn.disabled = true;
+    function formatDate(str) {
+        if (!str) return "";
+        try {
+            const d = new Date(str);
+            if (isNaN(d.getTime())) return "";
+            return d.getDate() + " " + d.toLocaleString("en", { month: "short" });
+        } catch(e) { return ""; }
+    }
 
-    try {
-        const res = await fetch(
-            `https://api.github.com/repos/${GH_REPO}/actions/workflows/${GH_WORKFLOW}/dispatches`,
-            {
-                method: 'POST',
-                headers: {
-                    'Authorization': `token ${GH_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ ref: GH_BRANCH })
+    function escHtml(str) {
+        return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    }
+
+    // ── Feed fetching ──
+    async function fetchUrl(url, quota) {
+        try {
+            const res = await fetch(PROXY + encodeURIComponent(url));
+            const text = await res.text();
+            const xml = new DOMParser().parseFromString(text, "text/xml");
+            return Array.from(xml.querySelectorAll("item")).slice(0, quota * 2).map(item => ({
+                title:     stripTags(item.querySelector("title")?.textContent || "Untitled"),
+                link:      item.querySelector("link")?.textContent?.trim() || "",
+                published: item.querySelector("pubDate")?.textContent || "",
+                summary:   item.querySelector("description")?.textContent || ""
+            }));
+        } catch(e) {
+            console.warn("Failed:", url, e);
+            return [];
+        }
+    }
+
+    async function loadFeed(feed) {
+        const fid  = feed.name.replace(/\s+/g, "-");
+        const ul   = document.querySelector("#feed-" + fid + " ul");
+        const seen = new Set();
+        const articles = [];
+
+        for (const {url, quota} of feed.urls) {
+            const items = await fetchUrl(url, quota);
+            let count = 0;
+            for (const item of items) {
+                if (count >= quota) break;
+                if (item.link && seen.has(item.link)) continue;
+                seen.add(item.link);
+                articles.push(item);
+                count++;
             }
-        );
+        }
 
-        if (!res.ok) {
-            btn.textContent = '↻ Failed — try again';
-            btn.disabled = false;
+        if (!articles.length) {
+            ul.innerHTML = '<li class="error-notice">Could not load feed.</li>';
             return;
         }
-    } catch(e) {
-        btn.textContent = '↻ Network error';
-        btn.disabled = false;
-        return;
+
+        ul.innerHTML = articles.map(a => `
+            <li>
+                ${a.link
+                    ? `<a class="headline" href="${escHtml(a.link)}" target="_blank" rel="noopener">${escHtml(a.title)}</a>`
+                    : `<span class="headline">${escHtml(a.title)}</span>`
+                }
+                ${a.summary ? `<p class="summary">${escHtml(snippet(a.summary))}</p>` : ""}
+                ${a.published ? `<span class="published">${formatDate(a.published)}</span>` : ""}
+            </li>`).join("");
     }
 
-    let secs = 45;
-    btn.textContent = `↻ Refreshing ${secs}s`;
-    const timer = setInterval(() => {
-        secs--;
-        btn.textContent = `↻ Refreshing ${secs}s`;
-        if (secs <= 0) {
-            clearInterval(timer);
-            window.location.reload();
-        }
-    }, 1000);
-}
+    function updateHeader() {
+        const sgt  = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore" }));
+        const date = sgt.toLocaleDateString("en-GB", { weekday:"long", day:"numeric", month:"long", year:"numeric" });
+        const hh   = String(sgt.getHours()).padStart(2, "0");
+        const mm   = String(sgt.getMinutes()).padStart(2, "0");
+        document.getElementById("timestamp").textContent  = date;
+        document.getElementById("refreshed").textContent  = "Last refreshed " + hh + ":" + mm + " SGT";
+    }
 
-document.querySelector('button.refresh').addEventListener('click', triggerRefresh);
-</script>
+    async function loadFeeds() {
+        updateHeader();
+        await Promise.all(FEEDS.map(loadFeed));
+    }
+    </script>
 </body>
 </html>

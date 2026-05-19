@@ -1,20 +1,26 @@
+import os
 import html
-import re
 from datetime import datetime, timezone, timedelta
-from email.utils import parsedate
-
-
-def _strip_tags(text):
-    return re.sub(r"<[^>]+>", "", text or "")
 
 OUTPUT_FILE = "index.html"
-SUMMARY_MAX_CHARS = 280
+PASSWORD = "Belani123!"
 
-GH_TOKEN = "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"
-GH_REPO  = "rbelani1/Claude-Projects"
-GH_WORKFLOW = "refresh.yml"
-GH_BRANCH   = "claude/create-news-digest-3CqJL"
-PASSWORD    = "Belani123!"
+FEEDS = [
+    {"name": "BBC News",               "urls": [{"url": "https://feeds.bbci.co.uk/news/rss.xml", "quota": 10}]},
+    {"name": "Bloomberg",              "urls": [{"url": "https://feeds.bloomberg.com/markets/news.rss", "quota": 10}]},
+    {"name": "Straits Times Singapore","urls": [{"url": "https://www.straitstimes.com/news/singapore/rss.xml", "quota": 10}]},
+    {"name": "WSJ",                    "urls": [{"url": "https://feeds.a.dj.com/rss/RSSWorldNews.xml", "quota": 10}]},
+    {"name": "Business Times Singapore","urls": [
+        {"url": "https://www.businesstimes.com.sg/rss/singapore",    "quota": 5},
+        {"url": "https://www.businesstimes.com.sg/rss/international", "quota": 5},
+    ]},
+    {"name": "The Economist",          "urls": [{"url": "https://www.economist.com/latest/rss.xml", "quota": 10}]},
+    {"name": "The Mint",               "urls": [
+        {"url": "https://www.livemint.com/rss/news",       "quota": 4},
+        {"url": "https://www.livemint.com/rss/technology", "quota": 3},
+        {"url": "https://www.livemint.com/rss/opinion",    "quota": 3},
+    ]},
+]
 
 CSS = """
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -122,38 +128,18 @@ p.refreshed {
     color: #6b7280;
 }
 
-button.refresh {
-    background: transparent;
-    border: 1px solid #3b82f6;
-    color: #3b82f6;
+/* ── Loading spinner ── */
+.loading {
+    color: #4b5563;
     font-family: 'Courier New', monospace;
-    font-size: 0.8rem;
-    padding: 0.4rem 0.9rem;
-    border-radius: 4px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.15s, color 0.15s;
-}
-
-button.refresh:hover:not(:disabled) {
-    background: #3b82f6;
-    color: #0f1117;
-}
-
-button.refresh:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+    font-size: 0.85rem;
+    padding: 1rem 0;
 }
 
 /* ── Main content ── */
-main {
-    max-width: 860px;
-    margin: 0 auto;
-}
+main { max-width: 860px; margin: 0 auto; }
 
-section.publication {
-    margin-bottom: 3rem;
-}
+section.publication { margin-bottom: 3rem; }
 
 section.publication h2 {
     font-size: 0.75rem;
@@ -171,6 +157,7 @@ section.publication h2 {
     color: #ef4444;
     font-size: 0.875rem;
     padding-left: 0.65rem;
+    list-style: none;
 }
 
 ul.articles { list-style: none; }
@@ -233,166 +220,31 @@ footer {
     }
 
     p.refreshed { font-size: 0.7rem; }
-
     header div.header-left h1 { font-size: 1.4rem; }
-
     a.headline { font-size: 0.975rem; }
-
     p.summary { font-size: 0.825rem; }
 }
 """
 
-JS = """
-const PASSWORD  = '{password}';
-const GH_TOKEN  = '{token}';
-const GH_REPO   = '{repo}';
-const GH_WORKFLOW = '{workflow}';
-const GH_BRANCH   = '{branch}';
 
-// ── Password gate ──
-(function() {{
-    if (localStorage.getItem('bf_auth') === PASSWORD) {{
-        document.getElementById('lock').style.display = 'none';
-        return;
-    }}
-    document.getElementById('lock').style.display = 'flex';
-}})();
-
-function unlock() {{
-    const val = document.getElementById('pw').value;
-    if (val === PASSWORD) {{
-        localStorage.setItem('bf_auth', val);
-        document.getElementById('lock').style.display = 'none';
-    }} else {{
-        document.getElementById('pw-error').textContent = 'Incorrect password.';
-        document.getElementById('pw').value = '';
-        document.getElementById('pw').focus();
-    }}
-}}
-
-document.getElementById('pw').addEventListener('keydown', function(e) {{
-    if (e.key === 'Enter') unlock();
-}});
-
-// ── Refresh button ──
-async function triggerRefresh() {{
-    const btn = document.querySelector('button.refresh');
-    btn.disabled = true;
-
-    try {{
-        const res = await fetch(
-            `https://api.github.com/repos/${{GH_REPO}}/actions/workflows/${{GH_WORKFLOW}}/dispatches`,
-            {{
-                method: 'POST',
-                headers: {{
-                    'Authorization': `token ${{GH_TOKEN}}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                }},
-                body: JSON.stringify({{ ref: GH_BRANCH }})
-            }}
-        );
-
-        if (!res.ok) {{
-            btn.textContent = '↻ Failed — try again';
-            btn.disabled = false;
-            return;
-        }}
-    }} catch(e) {{
-        btn.textContent = '↻ Network error';
-        btn.disabled = false;
-        return;
-    }}
-
-    let secs = 45;
-    btn.textContent = `↻ Refreshing ${{secs}}s`;
-    const timer = setInterval(() => {{
-        secs--;
-        btn.textContent = `↻ Refreshing ${{secs}}s`;
-        if (secs <= 0) {{
-            clearInterval(timer);
-            window.location.reload();
-        }}
-    }}, 1000);
-}}
-
-document.querySelector('button.refresh').addEventListener('click', triggerRefresh);
-"""
-
-
-def _esc(text):
-    return html.escape(text or "")
-
-
-def _format_date(published):
-    try:
-        t = parsedate(published)
-        return datetime(*t[:6]).strftime("%-d %b")
-    except Exception:
-        return ""
-
-
-def _snippet(text, max_chars=SUMMARY_MAX_CHARS):
-    clean = " ".join(text.split())
-    if len(clean) <= max_chars:
-        return clean
-    return clean[:max_chars].rsplit(" ", 1)[0] + "…"
-
-
-def _render_article(article):
-    title = _esc(article["title"])
-    link = _esc(article["link"])
-    summary = _esc(_snippet(_strip_tags(article["summary"]))) if article["summary"] else ""
-    published = _format_date(article["published"]) if article["published"] else ""
-
-    headline = (
-        f'<a class="headline" href="{link}" target="_blank" rel="noopener">{title}</a>'
-        if link else
-        f'<span class="headline">{title}</span>'
-    )
-    summary_html = f'<p class="summary">{summary}</p>' if summary else ""
-    published_html = f'<span class="published">{published}</span>' if published else ""
-
-    return f"""
-        <li>
-            {headline}
-            {summary_html}
-            {published_html}
-        </li>"""
-
-
-def _render_section(feed):
-    source = _esc(feed["source"])
-    articles = feed["articles"]
-    error = feed.get("error")
-
-    if error and not articles:
-        body = f'<p class="error-notice">Could not load feed: {_esc(str(error))}</p>'
-    else:
-        items = "".join(_render_article(a) for a in articles)
-        body = f'<ul class="articles">{items}\n        </ul>'
-
-    return f"""
-    <section class="publication">
-        <h2>{source}</h2>
-        {body}
+def _render_skeleton(feeds):
+    sections = ""
+    for feed in feeds:
+        name = html.escape(feed["name"])
+        fid = name.replace(" ", "-")
+        sections += f"""
+    <section class="publication" id="feed-{fid}">
+        <h2>{name}</h2>
+        <ul class="articles"><li class="loading">Loading...</li></ul>
     </section>"""
+    return sections
 
 
-def write_html(feed_results, output_path=OUTPUT_FILE):
-    sgt = timezone(timedelta(hours=8))
-    now_sgt = datetime.now(sgt)
-    timestamp = now_sgt.strftime("%A, %d %B %Y")
-    refreshed = now_sgt.strftime("%H:%M SGT")
-    sections = "".join(_render_section(f) for f in feed_results)
-
-    js = JS.format(
-        password=PASSWORD,
-        token=GH_TOKEN,
-        repo=GH_REPO,
-        workflow=GH_WORKFLOW,
-        branch=GH_BRANCH,
-    )
+def write_html(feed_results=None, output_path=OUTPUT_FILE):
+    import json
+    feeds_json = json.dumps(FEEDS)
+    password_json = json.dumps(PASSWORD)
+    sections = _render_skeleton(FEEDS)
 
     page = f"""<!DOCTYPE html>
 <html lang="en">
@@ -413,18 +265,139 @@ def write_html(feed_results, output_path=OUTPUT_FILE):
     <header>
         <div class="header-left">
             <h1>The Belani Foundry</h1>
-            <p class="timestamp">{timestamp}</p>
+            <p class="timestamp" id="timestamp">Loading...</p>
         </div>
         <div class="header-right">
-            <button class="refresh">↻ Refresh</button>
-            <p class="refreshed">Last refreshed {refreshed}</p>
+            <p class="refreshed" id="refreshed"></p>
         </div>
     </header>
-    <main>
-        {sections}
+    <main>{sections}
     </main>
-    <footer>Generated on {timestamp}</footer>
-    <script>{js}</script>
+    <footer>The Belani Foundry</footer>
+
+    <script>
+    const PASSWORD = {password_json};
+    const FEEDS    = {feeds_json};
+    const PROXY    = "https://corsproxy.io/?url=";
+    const SUMMARY_MAX = 280;
+
+    // ── Password gate ──
+    (function() {{
+        if (localStorage.getItem("bf_auth") === PASSWORD) {{
+            document.getElementById("lock").style.display = "none";
+            loadFeeds();
+        }}
+    }})();
+
+    function unlock() {{
+        const val = document.getElementById("pw").value;
+        if (val === PASSWORD) {{
+            localStorage.setItem("bf_auth", val);
+            document.getElementById("lock").style.display = "none";
+            loadFeeds();
+        }} else {{
+            document.getElementById("pw-error").textContent = "Incorrect password.";
+            document.getElementById("pw").value = "";
+            document.getElementById("pw").focus();
+        }}
+    }}
+
+    document.getElementById("pw").addEventListener("keydown", e => {{
+        if (e.key === "Enter") unlock();
+    }});
+
+    // ── Helpers ──
+    function stripTags(str) {{
+        const d = document.createElement("div");
+        d.innerHTML = str || "";
+        return d.textContent || d.innerText || "";
+    }}
+
+    function snippet(str) {{
+        const clean = stripTags(str).replace(/\\s+/g, " ").trim();
+        if (clean.length <= SUMMARY_MAX) return clean;
+        return clean.slice(0, SUMMARY_MAX).replace(/\\s+\\S*$/, "") + "\\u2026";
+    }}
+
+    function formatDate(str) {{
+        if (!str) return "";
+        try {{
+            const d = new Date(str);
+            if (isNaN(d.getTime())) return "";
+            return d.getDate() + " " + d.toLocaleString("en", {{ month: "short" }});
+        }} catch(e) {{ return ""; }}
+    }}
+
+    function escHtml(str) {{
+        return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    }}
+
+    // ── Feed fetching ──
+    async function fetchUrl(url, quota) {{
+        try {{
+            const res = await fetch(PROXY + encodeURIComponent(url));
+            const text = await res.text();
+            const xml = new DOMParser().parseFromString(text, "text/xml");
+            return Array.from(xml.querySelectorAll("item")).slice(0, quota * 2).map(item => ({{
+                title:     stripTags(item.querySelector("title")?.textContent || "Untitled"),
+                link:      item.querySelector("link")?.textContent?.trim() || "",
+                published: item.querySelector("pubDate")?.textContent || "",
+                summary:   item.querySelector("description")?.textContent || ""
+            }}));
+        }} catch(e) {{
+            console.warn("Failed:", url, e);
+            return [];
+        }}
+    }}
+
+    async function loadFeed(feed) {{
+        const fid  = feed.name.replace(/\\s+/g, "-");
+        const ul   = document.querySelector("#feed-" + fid + " ul");
+        const seen = new Set();
+        const articles = [];
+
+        for (const {{url, quota}} of feed.urls) {{
+            const items = await fetchUrl(url, quota);
+            let count = 0;
+            for (const item of items) {{
+                if (count >= quota) break;
+                if (item.link && seen.has(item.link)) continue;
+                seen.add(item.link);
+                articles.push(item);
+                count++;
+            }}
+        }}
+
+        if (!articles.length) {{
+            ul.innerHTML = '<li class="error-notice">Could not load feed.</li>';
+            return;
+        }}
+
+        ul.innerHTML = articles.map(a => `
+            <li>
+                ${{a.link
+                    ? `<a class="headline" href="${{escHtml(a.link)}}" target="_blank" rel="noopener">${{escHtml(a.title)}}</a>`
+                    : `<span class="headline">${{escHtml(a.title)}}</span>`
+                }}
+                ${{a.summary ? `<p class="summary">${{escHtml(snippet(a.summary))}}</p>` : ""}}
+                ${{a.published ? `<span class="published">${{formatDate(a.published)}}</span>` : ""}}
+            </li>`).join("");
+    }}
+
+    function updateHeader() {{
+        const sgt  = new Date(new Date().toLocaleString("en-US", {{ timeZone: "Asia/Singapore" }}));
+        const date = sgt.toLocaleDateString("en-GB", {{ weekday:"long", day:"numeric", month:"long", year:"numeric" }});
+        const hh   = String(sgt.getHours()).padStart(2, "0");
+        const mm   = String(sgt.getMinutes()).padStart(2, "0");
+        document.getElementById("timestamp").textContent  = date;
+        document.getElementById("refreshed").textContent  = "Last refreshed " + hh + ":" + mm + " SGT";
+    }}
+
+    async function loadFeeds() {{
+        updateHeader();
+        await Promise.all(FEEDS.map(loadFeed));
+    }}
+    </script>
 </body>
 </html>"""
 
