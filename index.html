@@ -97,6 +97,17 @@ header div.header-left p.timestamp {
     margin-top: 0.35rem;
 }
 
+header div.header-left p.articles-read {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-top: 0.2rem;
+}
+
+header div.header-left p.articles-read span {
+    color: #22c55e;
+}
+
 div.header-right {
     display: flex;
     flex-direction: column;
@@ -228,6 +239,7 @@ footer {
         <div class="header-left">
             <h1>The Belani Foundry</h1>
             <p class="timestamp" id="timestamp">Loading...</p>
+            <p class="articles-read">Articles Read Today: <span id="read-count">0</span></p>
         </div>
         <div class="header-right">
             <p class="refreshed" id="refreshed"></p>
@@ -302,8 +314,32 @@ footer {
         catch(e) { return new Set(); }
     }
 
+    function todaySGT() {
+        return new Date().toLocaleDateString("en-GB", { timeZone: "Asia/Singapore", day: "numeric", month: "short", year: "numeric" });
+    }
+
+    function getTodayCount() {
+        try {
+            const data = JSON.parse(localStorage.getItem("bf_read_today") || "{}");
+            return data.date === todaySGT() ? data.count : 0;
+        } catch(e) { return 0; }
+    }
+
+    function incrementTodayCount() {
+        const today = todaySGT();
+        let data;
+        try { data = JSON.parse(localStorage.getItem("bf_read_today") || "{}"); }
+        catch(e) { data = {}; }
+        const count = (data.date === today ? data.count : 0) + 1;
+        localStorage.setItem("bf_read_today", JSON.stringify({ date: today, count }));
+        document.getElementById("read-count").textContent = count;
+    }
+
     function markRead(url) {
         const read = getRead();
+        if (!read.has(url)) {
+            incrementTodayCount();
+        }
         read.add(url);
         localStorage.setItem("bf_read", JSON.stringify([...read]));
     }
@@ -397,6 +433,7 @@ footer {
         const mm   = String(sgt.getMinutes()).padStart(2, "0");
         document.getElementById("timestamp").textContent  = date;
         document.getElementById("refreshed").textContent  = "Last refreshed " + hh + ":" + mm + " SGT";
+        document.getElementById("read-count").textContent = getTodayCount();
     }
 
     document.addEventListener("click", e => {
