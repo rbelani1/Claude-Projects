@@ -12,14 +12,13 @@ def main():
     group.add_argument("--cli",  action="store_true", help="Print top headlines to terminal")
     args = parser.parse_args()
 
-    print("Fetching news feeds...")
-    results = fetch_all()
-
     if args.html:
         from html_output import write_html
-        path = write_html(results)
+        path = write_html()
         print(f"HTML digest written to: {path}")
     else:
+        print("Fetching news feeds...")
+        results = fetch_all()
         from cli_output import print_headlines
         print_headlines(results)
 

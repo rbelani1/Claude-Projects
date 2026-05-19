@@ -1,14 +1,13 @@
-name: Refresh Belani Foundry
+name: Deploy Belani Foundry
 
 on:
-  schedule:
-    - cron: '0 23 * * *'   # 7am SGT
-    - cron: '0 4 * * *'    # 12pm SGT
-    - cron: '0 10 * * *'   # 6pm SGT
+  push:
+    branches:
+      - claude/create-news-digest-3CqJL
   workflow_dispatch:
 
 jobs:
-  refresh:
+  deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -23,9 +22,7 @@ jobs:
       - name: Install dependencies
         run: pip install feedparser==6.0.11
 
-      - name: Generate digest
-        env:
-          GH_DISPATCH_TOKEN: ${{ secrets.GH_DISPATCH_TOKEN }}
+      - name: Generate HTML shell
         run: cd news-digest && python3 run.py --html
 
       - name: Deploy to GitHub Pages
