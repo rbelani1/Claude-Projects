@@ -406,7 +406,7 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
             const isRead = a.link && read.has(a.link);
             const tick = isRead ? `<span class="read-tick">&#10003;</span>` : "";
             const headline = a.link
-                ? `<a class="headline" href="${{escHtml(a.link)}}" target="_blank" rel="noopener" data-url="${{escHtml(a.link)}}">${{tick}}${{escHtml(a.title)}}</a>`
+                ? `<a class="headline" href="${{escHtml(a.link)}}" target="_blank" rel="noopener" data-url="${{escHtml(a.link)}}">${{escHtml(a.title)}}${{tick}}</a>`
                 : `<span class="headline">${{escHtml(a.title)}}</span>`;
             return `<li>
                 ${{headline}}
@@ -433,7 +433,7 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
             const tick = document.createElement("span");
             tick.className = "read-tick";
             tick.innerHTML = "&#10003;";
-            a.prepend(tick);
+            a.append(tick);
         }}
     }});
 
