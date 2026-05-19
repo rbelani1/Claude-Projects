@@ -451,7 +451,8 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
         const mm   = String(sgt.getMinutes()).padStart(2, "0");
         document.getElementById("timestamp").textContent  = date;
         document.getElementById("refreshed").textContent  = "Last refreshed " + hh + ":" + mm + " SGT";
-        document.getElementById("read-count").textContent = getTodayCount();
+        const count = getTodayCount();
+        document.getElementById("read-count").textContent = count > 0 ? count : "—";
     }}
 
     document.addEventListener("click", e => {{
