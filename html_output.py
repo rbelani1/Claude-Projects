@@ -170,7 +170,9 @@ ul.articles li {
 ul.articles li:last-child { border-bottom: none; }
 
 a.headline {
-    display: block;
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
     font-size: 1.05rem;
     color: #e5e7eb;
     text-decoration: none;
@@ -179,6 +181,12 @@ a.headline {
 }
 
 a.headline:hover { color: #3b82f6; }
+
+span.read-tick {
+    color: #22c55e;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
 
 p.summary {
     font-size: 0.875rem;
@@ -306,6 +314,18 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
         if (e.key === "Enter") unlock();
     }});
 
+    // ── Read tracking ──
+    function getRead() {{
+        try {{ return new Set(JSON.parse(localStorage.getItem("bf_read") || "[]")); }}
+        catch(e) {{ return new Set(); }}
+    }}
+
+    function markRead(url) {{
+        const read = getRead();
+        read.add(url);
+        localStorage.setItem("bf_read", JSON.stringify([...read]));
+    }}
+
     // ── Helpers ──
     function stripTags(str) {{
         const d = document.createElement("div");
@@ -373,15 +393,19 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
             return;
         }}
 
-        ul.innerHTML = articles.map(a => `
-            <li>
-                ${{a.link
-                    ? `<a class="headline" href="${{escHtml(a.link)}}" target="_blank" rel="noopener">${{escHtml(a.title)}}</a>`
-                    : `<span class="headline">${{escHtml(a.title)}}</span>`
-                }}
+        const read = getRead();
+        ul.innerHTML = articles.map(a => {{
+            const isRead = a.link && read.has(a.link);
+            const tick = isRead ? `<span class="read-tick">&#10003;</span>` : "";
+            const headline = a.link
+                ? `<a class="headline" href="${{escHtml(a.link)}}" target="_blank" rel="noopener" data-url="${{escHtml(a.link)}}">${{tick}}${{escHtml(a.title)}}</a>`
+                : `<span class="headline">${{escHtml(a.title)}}</span>`;
+            return `<li>
+                ${{headline}}
                 ${{a.summary ? `<p class="summary">${{escHtml(snippet(a.summary))}}</p>` : ""}}
                 ${{a.published ? `<span class="published">${{formatDate(a.published)}}</span>` : ""}}
-            </li>`).join("");
+            </li>`;
+        }}).join("");
     }}
 
     function updateHeader() {{
@@ -392,6 +416,18 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
         document.getElementById("timestamp").textContent  = date;
         document.getElementById("refreshed").textContent  = "Last refreshed " + hh + ":" + mm + " SGT";
     }}
+
+    document.addEventListener("click", e => {{
+        const a = e.target.closest("a.headline[data-url]");
+        if (!a) return;
+        markRead(a.dataset.url);
+        if (!a.querySelector(".read-tick")) {{
+            const tick = document.createElement("span");
+            tick.className = "read-tick";
+            tick.innerHTML = "&#10003;";
+            a.prepend(tick);
+        }}
+    }});
 
     async function loadFeeds() {{
         updateHeader();
