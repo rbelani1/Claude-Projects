@@ -464,14 +464,6 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
             tick.innerHTML = "&#10003;";
             a.append(tick);
         }}
-        const li = a.closest("li");
-        if (li) {{
-            setTimeout(() => {{
-                li.style.transition = "opacity 0.4s";
-                li.style.opacity = "0";
-                setTimeout(() => li.remove(), 400);
-            }}, 800);
-        }}
     }});
 
     async function loadFeeds() {{
