@@ -95,7 +95,7 @@ header {
     border-bottom: 1px solid #2d2f3a;
     padding-bottom: 1rem;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 0.75rem;
@@ -126,9 +126,16 @@ header div.header-left p.articles-read span {
     color: #22c55e;
 }
 
-span.refreshed {
+div.header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.35rem;
+}
+
+p.refreshed {
     font-family: 'Courier New', monospace;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: #6b7280;
 }
 
@@ -223,7 +230,15 @@ footer {
         align-items: flex-start;
     }
 
-    span.refreshed { font-size: 0.7rem; }
+    div.header-right {
+        flex-direction: row;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    p.refreshed { font-size: 0.7rem; }
     header div.header-left h1 { font-size: 1.4rem; }
     a.headline { font-size: 0.975rem; }
     p.summary { font-size: 0.825rem; }
@@ -269,8 +284,11 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
     <header>
         <div class="header-left">
             <h1>The Belani Foundry</h1>
-            <p class="timestamp"><span id="timestamp">Loading...</span> &nbsp;·&nbsp; <span class="refreshed" id="refreshed"></span></p>
+            <p class="timestamp" id="timestamp">Loading...</p>
             <p class="articles-read">Articles Read Today: <span id="read-count">—</span></p>
+        </div>
+        <div class="header-right">
+            <p class="refreshed" id="refreshed"></p>
         </div>
     </header>
     <main>{sections}
