@@ -389,12 +389,12 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
     }}
 
     // ── Feed fetching ──
-    async function fetchUrl(url, quota) {{
+    async function fetchUrl(url) {{
         try {{
             const res = await fetch(PROXY + encodeURIComponent(url));
             const text = await res.text();
             const xml = new DOMParser().parseFromString(text, "text/xml");
-            return Array.from(xml.querySelectorAll("item")).slice(0, quota * 2).map(item => ({{
+            return Array.from(xml.querySelectorAll("item")).map(item => ({{
                 title:     stripTags(item.querySelector("title")?.textContent || "Untitled"),
                 link:      item.querySelector("link")?.textContent?.trim() || "",
                 published: item.querySelector("pubDate")?.textContent || "",
@@ -409,13 +409,15 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
     async function loadFeed(feed) {{
         const fid  = feed.name.replace(/\\s+/g, "-");
         const ul   = document.querySelector("#feed-" + fid + " ul");
+        const read = getRead();
         const seen = new Set();
         const articles = [];
 
         for (const {{url, quota}} of feed.urls) {{
-            const items = await fetchUrl(url, quota);
+            const items = await fetchUrl(url);
+            const unread = items.filter(item => !item.link || !read.has(item.link));
             let count = 0;
-            for (const item of items) {{
+            for (const item of unread) {{
                 if (count >= quota) break;
                 if (item.link && seen.has(item.link)) continue;
                 seen.add(item.link);
@@ -429,12 +431,9 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
             return;
         }}
 
-        const read = getRead();
         ul.innerHTML = articles.map(a => {{
-            const isRead = a.link && read.has(a.link);
-            const tick = isRead ? `<span class="read-tick">&#10003;</span>` : "";
             const headline = a.link
-                ? `<a class="headline" href="${{escHtml(a.link)}}" target="_blank" rel="noopener" data-url="${{escHtml(a.link)}}">${{escHtml(a.title)}}${{tick}}</a>`
+                ? `<a class="headline" href="${{escHtml(a.link)}}" target="_blank" rel="noopener" data-url="${{escHtml(a.link)}}">${{escHtml(a.title)}}</a>`
                 : `<span class="headline">${{escHtml(a.title)}}</span>`;
             return `<li>
                 ${{headline}}
@@ -464,6 +463,14 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
             tick.className = "read-tick";
             tick.innerHTML = "&#10003;";
             a.append(tick);
+        }}
+        const li = a.closest("li");
+        if (li) {{
+            setTimeout(() => {{
+                li.style.transition = "opacity 0.4s";
+                li.style.opacity = "0";
+                setTimeout(() => li.remove(), 400);
+            }}, 800);
         }}
     }});
 
