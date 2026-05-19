@@ -1,3 +1,4 @@
+import os
 import html
 import re
 from datetime import datetime, timezone, timedelta
@@ -10,7 +11,7 @@ def _strip_tags(text):
 OUTPUT_FILE = "index.html"
 SUMMARY_MAX_CHARS = 280
 
-GH_TOKEN = "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"
+GH_TOKEN = os.environ.get("GH_DISPATCH_TOKEN", "")
 GH_REPO  = "rbelani1/Claude-Projects"
 GH_WORKFLOW = "refresh.yml"
 GH_BRANCH   = "claude/create-news-digest-3CqJL"
