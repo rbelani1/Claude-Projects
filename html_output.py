@@ -183,9 +183,17 @@ a.headline {
 a.headline:hover { color: #3b82f6; }
 
 span.read-tick {
-    color: #22c55e;
-    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.1rem;
+    height: 1.1rem;
+    background: #22c55e;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 0.65rem;
     flex-shrink: 0;
+    line-height: 1;
 }
 
 p.summary {
