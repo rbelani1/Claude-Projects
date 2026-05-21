@@ -562,7 +562,12 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
         const dismissed = getDismissed();
 
         // Fetch all URLs in parallel
-        const fetched = await Promise.all(feed.urls.map(u => fetchUrl(u.url)));
+        const rawFetched = await Promise.all(feed.urls.map(u => fetchUrl(u.url)));
+
+        // Apply todayOnly before redistribution so empty-today feeds give up their quota
+        const fetched = rawFetched.map(items =>
+            feed.todayOnly ? items.filter(it => isTodaySGT(it.published)) : items
+        );
 
         // Redistribute quota from URLs that returned nothing to those that did
         const quotas    = feed.urls.map(u => u.quota);
@@ -581,11 +586,7 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
         const articles = [];
         const pool     = [];
         fetched.forEach((items, i) => {{
-            const available = items.filter(it => {{
-                if (it.link && (read.has(it.link) || dismissed.has(it.link))) return false;
-                if (feed.todayOnly && !isTodaySGT(it.published)) return false;
-                return true;
-            }});
+            const available = items.filter(it => !it.link || (!read.has(it.link) && !dismissed.has(it.link)));
             let count = 0;
             for (const item of available) {{
                 if (item.link && seen.has(item.link)) continue;
