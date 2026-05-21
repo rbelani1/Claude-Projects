@@ -218,10 +218,9 @@ footer {
     text-align: center;
 }
 
-/* ── Next-section button ── */
-#next-btn {
+/* ── Section nav buttons ── */
+#prev-btn, #next-btn {
     position: fixed;
-    bottom: 1.75rem;
     right: max(1rem, calc(50vw - 430px));
     width: 2.25rem;
     height: 2.25rem;
@@ -232,25 +231,27 @@ footer {
     align-items: center;
     justify-content: center;
     z-index: 100;
-    transition: transform 0.3s, opacity 0.15s;
     opacity: 0.75;
     padding: 0;
+    transition: opacity 0.15s;
 }
 
-#next-btn:hover { opacity: 1; }
+#prev-btn { bottom: 4.25rem; }
+#next-btn { bottom: 1.75rem; }
 
-#next-btn::before {
+#prev-btn:hover, #next-btn:hover { opacity: 1; }
+
+#prev-btn::before, #next-btn::before {
     content: '';
     display: block;
     width: 0.65rem;
     height: 0.65rem;
     border-right: 2.5px solid #3b82f6;
     border-bottom: 2.5px solid #3b82f6;
-    transform: rotate(45deg);
-    margin-top: -0.35rem;
 }
 
-#next-btn.at-end { transform: rotate(180deg); }
+#prev-btn::before { transform: rotate(225deg); margin-top: 0.35rem; }
+#next-btn::before { transform: rotate(45deg);  margin-top: -0.35rem; }
 
 /* ── Filter bar ── */
 .filter-bar {
@@ -317,7 +318,7 @@ footer {
     p.summary { font-size: 0.825rem; }
 
     .filter-bar { margin: -0.75rem auto 1.5rem; }
-    #next-btn { right: 0.85rem; }
+    #prev-btn, #next-btn { right: 0.85rem; }
 }
 </style>
 </head>
@@ -380,6 +381,7 @@ footer {
     </section>
     </main>
     <footer>The Belani Foundry</footer>
+    <button id="prev-btn" title="Previous section"></button>
     <button id="next-btn" title="Next section"></button>
 
     <script>
@@ -639,31 +641,36 @@ footer {
     // Restore saved filter on load
     applyFilter(getFilter());
 
-    // ── Next-section button ──
+    // ── Section nav buttons ──
     (function() {
-        const btn = document.getElementById("next-btn");
-
         function visibleSections() {
             return Array.from(document.querySelectorAll("section.publication"))
                 .filter(s => s.style.display !== "none");
         }
 
-        function nextSection() {
+        document.getElementById("next-btn").addEventListener("click", function() {
             const sections = visibleSections();
             if (!sections.length) return;
             const midScreen = window.scrollY + window.innerHeight / 2;
             const next = sections.find(s => s.getBoundingClientRect().top + window.scrollY > midScreen + 10);
             if (next) {
                 next.scrollIntoView({ behavior: "smooth", block: "start" });
-                btn.classList.remove("at-end");
             } else {
                 window.scrollTo({ top: 0, behavior: "smooth" });
-                btn.classList.add("at-end");
-                setTimeout(() => btn.classList.remove("at-end"), 600);
             }
-        }
+        });
 
-        btn.addEventListener("click", nextSection);
+        document.getElementById("prev-btn").addEventListener("click", function() {
+            const sections = visibleSections();
+            if (!sections.length) return;
+            const midScreen = window.scrollY + window.innerHeight / 2;
+            const prev = [...sections].reverse().find(s => s.getBoundingClientRect().top + window.scrollY < midScreen - 10);
+            if (prev) {
+                prev.scrollIntoView({ behavior: "smooth", block: "start" });
+            } else {
+                sections[sections.length - 1].scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+        });
     })();
     </script>
 </body>
