@@ -244,24 +244,27 @@ footer {
 #next-btn {
     position: fixed;
     bottom: 1.75rem;
-    right: 1.25rem;
+    right: max(1rem, calc(50vw - 430px));
     width: 2.75rem;
     height: 2.75rem;
     border-radius: 50%;
-    background: #1e2130;
-    border: 1px solid #2d2f3a;
-    color: #9ca3af;
-    font-size: 1.1rem;
+    background: rgba(59, 130, 246, 0.72);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(59, 130, 246, 0.45);
+    color: #fff;
+    font-size: 1.25rem;
+    line-height: 1;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 100;
-    transition: background 0.15s, color 0.15s, opacity 0.2s;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    transition: background 0.15s, transform 0.3s;
+    box-shadow: 0 2px 12px rgba(59, 130, 246, 0.3);
 }
 
-#next-btn:hover { background: #2d3148; color: #e5e7eb; }
+#next-btn:hover { background: rgba(59, 130, 246, 0.92); }
 
 #next-btn.at-end { transform: rotate(180deg); }
 
@@ -330,6 +333,7 @@ footer {
     p.summary { font-size: 0.825rem; }
 
     .filter-bar { margin: -0.75rem auto 1.5rem; }
+    #next-btn { right: 0.85rem; }
 }
 """
 
