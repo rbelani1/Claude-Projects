@@ -343,10 +343,11 @@ footer {
     <footer>The Belani Foundry</footer>
 
     <script>
-    const PASSWORD = "Belani123!";
-    const FEEDS    = [{"name": "BBC News", "urls": [{"url": "https://feeds.bbci.co.uk/news/rss.xml", "quota": 10}]}, {"name": "Bloomberg", "urls": [{"url": "https://feeds.bloomberg.com/markets/news.rss", "quota": 10}]}, {"name": "Straits Times Singapore", "urls": [{"url": "https://www.straitstimes.com/news/singapore/rss.xml", "quota": 10}]}, {"name": "WSJ", "urls": [{"url": "https://feeds.a.dj.com/rss/RSSWorldNews.xml", "quota": 10}]}, {"name": "Business Times Singapore", "urls": [{"url": "https://www.businesstimes.com.sg/rss/singapore", "quota": 5}, {"url": "https://www.businesstimes.com.sg/rss/international", "quota": 5}]}, {"name": "The Economist", "urls": [{"url": "https://www.economist.com/latest/rss.xml", "quota": 10}]}, {"name": "The Mint", "urls": [{"url": "https://www.livemint.com/rss/news", "quota": 4}, {"url": "https://www.livemint.com/rss/technology", "quota": 3}, {"url": "https://www.livemint.com/rss/opinion", "quota": 3}]}];
-    const PROXY    = "https://corsproxy.io/?url=";
-    const SUMMARY_MAX = 280;
+    const PASSWORD      = "Belani123!";
+    const FEEDS         = [{"name": "BBC News", "urls": [{"url": "https://feeds.bbci.co.uk/news/rss.xml", "quota": 10}]}, {"name": "Bloomberg", "urls": [{"url": "https://feeds.bloomberg.com/markets/news.rss", "quota": 10}]}, {"name": "Straits Times Singapore", "urls": [{"url": "https://www.straitstimes.com/news/singapore/rss.xml", "quota": 10}]}, {"name": "WSJ", "urls": [{"url": "https://feeds.a.dj.com/rss/RSSWorldNews.xml", "quota": 10}]}, {"name": "Business Times Singapore", "urls": [{"url": "https://www.businesstimes.com.sg/rss/singapore", "quota": 5}, {"url": "https://www.businesstimes.com.sg/rss/international", "quota": 5}]}, {"name": "The Economist", "urls": [{"url": "https://www.economist.com/latest/rss.xml", "quota": 10}]}, {"name": "The Mint", "urls": [{"url": "https://www.livemint.com/rss/news", "quota": 4}, {"url": "https://www.livemint.com/rss/technology", "quota": 3}, {"url": "https://www.livemint.com/rss/opinion", "quota": 3}]}];
+    const PROXY         = "https://corsproxy.io/?url=";
+    const SUMMARY_MAX   = 280;
+    const BUSINESS_FEEDS = new Set(["Bloomberg", "WSJ", "Business Times Singapore", "The Economist", "The Mint"]);
 
     // ── Password gate ──
     (function() {
@@ -561,8 +562,6 @@ footer {
     }
 
     // ── All / Business filter ──
-    const BUSINESS_FEEDS = new Set(["Bloomberg", "WSJ", "Business Times Singapore", "The Economist", "The Mint"]);
-
     function getFilter() {
         return localStorage.getItem("bf_filter") || "all";
     }

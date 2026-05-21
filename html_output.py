@@ -361,10 +361,11 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
     <footer>The Belani Foundry</footer>
 
     <script>
-    const PASSWORD = {password_json};
-    const FEEDS    = {feeds_json};
-    const PROXY    = "https://corsproxy.io/?url=";
-    const SUMMARY_MAX = 280;
+    const PASSWORD      = {password_json};
+    const FEEDS         = {feeds_json};
+    const PROXY         = "https://corsproxy.io/?url=";
+    const SUMMARY_MAX   = 280;
+    const BUSINESS_FEEDS = new Set(["Bloomberg", "WSJ", "Business Times Singapore", "The Economist", "The Mint"]);
 
     // ── Password gate ──
     (function() {{
@@ -579,8 +580,6 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
     }}
 
     // ── All / Business filter ──
-    const BUSINESS_FEEDS = new Set(["Bloomberg", "WSJ", "Business Times Singapore", "The Economist", "The Mint"]);
-
     function getFilter() {{
         return localStorage.getItem("bf_filter") || "all";
     }}
