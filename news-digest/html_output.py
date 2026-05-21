@@ -174,7 +174,7 @@ section.publication h2 {
 ul.articles { list-style: none; }
 
 ul.articles li {
-    padding: 1rem 0;
+    padding: 1rem 2rem 1rem 0;
     border-bottom: 1px solid #1e2130;
     position: relative;
 }
@@ -197,14 +197,13 @@ button.dismiss {
 button.dismiss:hover { color: #ef4444; }
 
 a.headline {
-    display: flex;
-    align-items: baseline;
-    gap: 0.4rem;
+    display: block;
     font-size: 1.05rem;
     color: #e5e7eb;
     text-decoration: none;
     margin-bottom: 0.3rem;
     transition: color 0.15s;
+    word-wrap: break-word;
 }
 
 a.headline:hover { color: #3b82f6; }
