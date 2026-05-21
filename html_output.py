@@ -7,6 +7,10 @@ PASSWORD = "Belani123!"
 
 FEEDS = [
     {"name": "BBC News",               "urls": [{"url": "https://feeds.bbci.co.uk/news/rss.xml", "quota": 10}]},
+    {"name": "New York Times",         "urls": [
+        {"url": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",   "quota": 7},
+        {"url": "https://rss.nytimes.com/services/xml/rss/nyt/Opinion.xml", "quota": 3},
+    ]},
     {"name": "Bloomberg",              "urls": [{"url": "https://feeds.bloomberg.com/markets/news.rss", "quota": 10}]},
     {"name": "Straits Times Singapore","urls": [{"url": "https://www.straitstimes.com/news/singapore/rss.xml", "quota": 10}]},
     {"name": "WSJ",                    "urls": [{"url": "https://feeds.a.dj.com/rss/RSSWorldNews.xml", "quota": 10}]},
@@ -501,30 +505,46 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
     }}
 
     async function loadFeed(feed) {{
-        const fid      = feed.name.replace(/\\s+/g, "-");
-        const ul       = document.querySelector("#feed-" + fid + " ul");
+        const fid     = feed.name.replace(/\\s+/g, "-");
+        const section = document.querySelector("#feed-" + fid);
+        const ul      = section?.querySelector("ul");
         const read      = getRead();
         const dismissed = getDismissed();
+
+        // Fetch all URLs in parallel
+        const fetched = await Promise.all(feed.urls.map(u => fetchUrl(u.url)));
+
+        // Redistribute quota from URLs that returned nothing to those that did
+        const quotas    = feed.urls.map(u => u.quota);
+        const activeIdx = quotas.map((_, i) => i).filter(i => fetched[i].length > 0);
+        const emptyIdx  = quotas.map((_, i) => i).filter(i => fetched[i].length === 0);
+        const leftover  = emptyIdx.reduce((s, i) => s + quotas[i], 0);
+        const effective = [...quotas];
+        if (leftover > 0 && activeIdx.length > 0) {{
+            const base = Math.floor(leftover / activeIdx.length);
+            const rem  = leftover % activeIdx.length;
+            activeIdx.forEach((i, n) => {{ effective[i] += base + (n < rem ? 1 : 0); }});
+        }}
+
+        // Collect articles and overflow pool
         const seen     = new Set();
         const articles = [];
         const pool     = [];
-
-        for (const {{url, quota}} of feed.urls) {{
-            const items     = await fetchUrl(url);
-            const available = items.filter(i => !i.link || (!read.has(i.link) && !dismissed.has(i.link)));
+        fetched.forEach((items, i) => {{
+            const available = items.filter(it => !it.link || (!read.has(it.link) && !dismissed.has(it.link)));
             let count = 0;
             for (const item of available) {{
                 if (item.link && seen.has(item.link)) continue;
                 seen.add(item.link);
-                if (count < quota) {{ articles.push(item); count++; }}
+                if (count < effective[i]) {{ articles.push(item); count++; }}
                 else {{ pool.push(item); }}
             }}
-        }}
+        }});
 
         feedPool[feed.name] = pool;
 
         if (!articles.length) {{
-            ul.innerHTML = '<li class="error-notice">Could not load feed.</li>';
+            section?.remove();
             return;
         }}
 

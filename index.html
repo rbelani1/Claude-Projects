@@ -315,6 +315,10 @@ footer {
         <h2>BBC News</h2>
         <ul class="articles"><li class="loading">Loading...</li></ul>
     </section>
+    <section class="publication" id="feed-New-York-Times">
+        <h2>New York Times</h2>
+        <ul class="articles"><li class="loading">Loading...</li></ul>
+    </section>
     <section class="publication" id="feed-Bloomberg">
         <h2>Bloomberg</h2>
         <ul class="articles"><li class="loading">Loading...</li></ul>
@@ -344,7 +348,7 @@ footer {
 
     <script>
     const PASSWORD      = "Belani123!";
-    const FEEDS         = [{"name": "BBC News", "urls": [{"url": "https://feeds.bbci.co.uk/news/rss.xml", "quota": 10}]}, {"name": "Bloomberg", "urls": [{"url": "https://feeds.bloomberg.com/markets/news.rss", "quota": 10}]}, {"name": "Straits Times Singapore", "urls": [{"url": "https://www.straitstimes.com/news/singapore/rss.xml", "quota": 10}]}, {"name": "WSJ", "urls": [{"url": "https://feeds.a.dj.com/rss/RSSWorldNews.xml", "quota": 10}]}, {"name": "Business Times Singapore", "urls": [{"url": "https://www.businesstimes.com.sg/rss/singapore", "quota": 5}, {"url": "https://www.businesstimes.com.sg/rss/international", "quota": 5}]}, {"name": "The Economist", "urls": [{"url": "https://www.economist.com/latest/rss.xml", "quota": 10}]}, {"name": "The Mint", "urls": [{"url": "https://www.livemint.com/rss/news", "quota": 4}, {"url": "https://www.livemint.com/rss/technology", "quota": 3}, {"url": "https://www.livemint.com/rss/opinion", "quota": 3}]}];
+    const FEEDS         = [{"name": "BBC News", "urls": [{"url": "https://feeds.bbci.co.uk/news/rss.xml", "quota": 10}]}, {"name": "New York Times", "urls": [{"url": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml", "quota": 7}, {"url": "https://rss.nytimes.com/services/xml/rss/nyt/Opinion.xml", "quota": 3}]}, {"name": "Bloomberg", "urls": [{"url": "https://feeds.bloomberg.com/markets/news.rss", "quota": 10}]}, {"name": "Straits Times Singapore", "urls": [{"url": "https://www.straitstimes.com/news/singapore/rss.xml", "quota": 10}]}, {"name": "WSJ", "urls": [{"url": "https://feeds.a.dj.com/rss/RSSWorldNews.xml", "quota": 10}]}, {"name": "Business Times Singapore", "urls": [{"url": "https://www.businesstimes.com.sg/rss/singapore", "quota": 5}, {"url": "https://www.businesstimes.com.sg/rss/international", "quota": 5}]}, {"name": "The Economist", "urls": [{"url": "https://www.economist.com/latest/rss.xml", "quota": 10}]}, {"name": "The Mint", "urls": [{"url": "https://www.livemint.com/rss/news", "quota": 4}, {"url": "https://www.livemint.com/rss/technology", "quota": 3}, {"url": "https://www.livemint.com/rss/opinion", "quota": 3}]}];
     const PROXY         = "https://corsproxy.io/?url=";
     const SUMMARY_MAX   = 280;
     const BUSINESS_FEEDS = new Set(["Bloomberg", "WSJ", "Business Times Singapore", "The Economist", "The Mint"]);
@@ -483,30 +487,46 @@ footer {
     }
 
     async function loadFeed(feed) {
-        const fid      = feed.name.replace(/\s+/g, "-");
-        const ul       = document.querySelector("#feed-" + fid + " ul");
+        const fid     = feed.name.replace(/\s+/g, "-");
+        const section = document.querySelector("#feed-" + fid);
+        const ul      = section?.querySelector("ul");
         const read      = getRead();
         const dismissed = getDismissed();
+
+        // Fetch all URLs in parallel
+        const fetched = await Promise.all(feed.urls.map(u => fetchUrl(u.url)));
+
+        // Redistribute quota from URLs that returned nothing to those that did
+        const quotas    = feed.urls.map(u => u.quota);
+        const activeIdx = quotas.map((_, i) => i).filter(i => fetched[i].length > 0);
+        const emptyIdx  = quotas.map((_, i) => i).filter(i => fetched[i].length === 0);
+        const leftover  = emptyIdx.reduce((s, i) => s + quotas[i], 0);
+        const effective = [...quotas];
+        if (leftover > 0 && activeIdx.length > 0) {
+            const base = Math.floor(leftover / activeIdx.length);
+            const rem  = leftover % activeIdx.length;
+            activeIdx.forEach((i, n) => { effective[i] += base + (n < rem ? 1 : 0); });
+        }
+
+        // Collect articles and overflow pool
         const seen     = new Set();
         const articles = [];
         const pool     = [];
-
-        for (const {url, quota} of feed.urls) {
-            const items     = await fetchUrl(url);
-            const available = items.filter(i => !i.link || (!read.has(i.link) && !dismissed.has(i.link)));
+        fetched.forEach((items, i) => {
+            const available = items.filter(it => !it.link || (!read.has(it.link) && !dismissed.has(it.link)));
             let count = 0;
             for (const item of available) {
                 if (item.link && seen.has(item.link)) continue;
                 seen.add(item.link);
-                if (count < quota) { articles.push(item); count++; }
+                if (count < effective[i]) { articles.push(item); count++; }
                 else { pool.push(item); }
             }
-        }
+        });
 
         feedPool[feed.name] = pool;
 
         if (!articles.length) {
-            ul.innerHTML = '<li class="error-notice">Could not load feed.</li>';
+            section?.remove();
             return;
         }
 
