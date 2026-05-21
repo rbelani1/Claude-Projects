@@ -236,6 +236,48 @@ footer {
     text-align: center;
 }
 
+/* ── Filter bar ── */
+.filter-bar {
+    max-width: 860px;
+    margin: -1.5rem auto 2rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.filter-toggle {
+    display: inline-flex;
+    border: 1px solid #2d2f3a;
+    border-radius: 6px;
+    overflow: hidden;
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+}
+
+.filter-toggle button {
+    background: transparent;
+    border: none;
+    color: #6b7280;
+    padding: 0.35rem 0.85rem;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: background 0.15s, color 0.15s;
+}
+
+.filter-toggle button:first-child {
+    border-right: 1px solid #2d2f3a;
+}
+
+.filter-toggle button.active {
+    background: #3b82f6;
+    color: #fff;
+}
+
+.filter-toggle button:not(.active):hover {
+    background: #1e2130;
+    color: #d1d5db;
+}
+
 /* ── Mobile ── */
 @media (max-width: 600px) {
     body { padding: 1.25rem 0.85rem; }
@@ -257,6 +299,8 @@ footer {
     header div.header-left h1 { font-size: 1.4rem; }
     a.headline { font-size: 0.975rem; }
     p.summary { font-size: 0.825rem; }
+
+    .filter-bar { margin: -0.75rem auto 1.5rem; }
 }
 """
 
@@ -306,6 +350,12 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
             <p class="refreshed" id="refreshed"></p>
         </div>
     </header>
+    <div class="filter-bar">
+        <div class="filter-toggle">
+            <button id="btn-all" onclick="setFilter('all')">All</button>
+            <button id="btn-business" onclick="setFilter('business')">Business</button>
+        </div>
+    </div>
     <main>{sections}
     </main>
     <footer>The Belani Foundry</footer>
@@ -524,8 +574,33 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
 
     async function loadFeeds() {{
         updateHeader();
+        applyFilter(getFilter());
         await Promise.all(FEEDS.map(loadFeed));
     }}
+
+    // ── All / Business filter ──
+    const BUSINESS_FEEDS = new Set(["Bloomberg", "WSJ", "Business Times Singapore", "The Economist", "The Mint"]);
+
+    function getFilter() {{
+        return localStorage.getItem("bf_filter") || "all";
+    }}
+
+    function applyFilter(filter) {{
+        document.querySelectorAll("section.publication").forEach(sec => {{
+            const name = sec.querySelector("h2")?.textContent || "";
+            sec.style.display = (filter === "all" || BUSINESS_FEEDS.has(name)) ? "" : "none";
+        }});
+        document.getElementById("btn-all").classList.toggle("active", filter === "all");
+        document.getElementById("btn-business").classList.toggle("active", filter === "business");
+    }}
+
+    function setFilter(filter) {{
+        localStorage.setItem("bf_filter", filter);
+        applyFilter(filter);
+    }}
+
+    // Restore saved filter on load
+    applyFilter(getFilter());
     </script>
 </body>
 </html>"""
