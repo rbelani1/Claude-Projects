@@ -13,7 +13,10 @@ FEEDS = [
     ]},
     {"name": "Bloomberg",              "urls": [{"url": "https://feeds.bloomberg.com/markets/news.rss", "quota": 10}]},
     {"name": "Straits Times Singapore","urls": [{"url": "https://www.straitstimes.com/news/singapore/rss.xml", "quota": 10}]},
-    {"name": "WSJ",                    "urls": [{"url": "https://feeds.a.dj.com/rss/RSSWorldNews.xml", "quota": 10}]},
+    {"name": "WSJ",                    "urls": [
+        {"url": "https://feeds.a.dj.com/rss/RSSMarketsMain.xml", "quota": 5},
+        {"url": "https://feeds.a.dj.com/rss/RSSOpinion.xml",     "quota": 5},
+    ], "todayOnly": True},
     {"name": "Business Times Singapore","urls": [
         {"url": "https://www.businesstimes.com.sg/rss/singapore",    "quota": 5},
         {"url": "https://www.businesstimes.com.sg/rss/international", "quota": 5},
@@ -496,6 +499,14 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
         return clean.slice(0, SUMMARY_MAX).replace(/\\s+\\S*$/, "") + "\\u2026";
     }}
 
+    function isTodaySGT(dateStr) {{
+        if (!dateStr) return false;
+        try {{
+            const opts = {{ timeZone: "Asia/Singapore", day: "numeric", month: "numeric", year: "numeric" }};
+            return new Date(dateStr).toLocaleDateString("en-GB", opts) === new Date().toLocaleDateString("en-GB", opts);
+        }} catch(e) {{ return false; }}
+    }}
+
     function formatDate(str) {{
         if (!str) return "";
         try {{
@@ -569,7 +580,11 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
         const articles = [];
         const pool     = [];
         fetched.forEach((items, i) => {{
-            const available = items.filter(it => !it.link || (!read.has(it.link) && !dismissed.has(it.link)));
+            const available = items.filter(it => {{
+                if (it.link && (read.has(it.link) || dismissed.has(it.link))) return false;
+                if (feed.todayOnly && !isTodaySGT(it.published)) return false;
+                return true;
+            }});
             let count = 0;
             for (const item of available) {{
                 if (item.link && seen.has(item.link)) continue;
