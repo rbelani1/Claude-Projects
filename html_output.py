@@ -661,34 +661,45 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
 
     // ── Section nav buttons ──
     (function() {{
+        const prevBtn = document.getElementById("prev-btn");
+        const nextBtn = document.getElementById("next-btn");
+
         function visibleSections() {{
             return Array.from(document.querySelectorAll("section.publication"))
                 .filter(s => s.style.display !== "none");
         }}
 
-        document.getElementById("next-btn").addEventListener("click", function() {{
+        function currentIndex(sections) {{
+            let idx = 0;
+            for (let i = 0; i < sections.length; i++) {{
+                if (sections[i].getBoundingClientRect().top + window.scrollY <= window.scrollY + 80) idx = i;
+            }}
+            return idx;
+        }}
+
+        function updateVisibility() {{
+            const atTop    = window.scrollY < 50;
+            const atBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 50;
+            prevBtn.style.display = atTop    ? "none" : "flex";
+            nextBtn.style.display = atBottom ? "none" : "flex";
+        }}
+
+        nextBtn.addEventListener("click", function() {{
             const sections = visibleSections();
             if (!sections.length) return;
-            const midScreen = window.scrollY + window.innerHeight / 2;
-            const next = sections.find(s => s.getBoundingClientRect().top + window.scrollY > midScreen + 10);
-            if (next) {{
-                next.scrollIntoView({{ behavior: "smooth", block: "start" }});
-            }} else {{
-                window.scrollTo({{ top: 0, behavior: "smooth" }});
-            }}
+            const next = sections[currentIndex(sections) + 1];
+            if (next) next.scrollIntoView({{ behavior: "smooth", block: "start" }});
         }});
 
-        document.getElementById("prev-btn").addEventListener("click", function() {{
+        prevBtn.addEventListener("click", function() {{
             const sections = visibleSections();
             if (!sections.length) return;
-            const midScreen = window.scrollY + window.innerHeight / 2;
-            const prev = [...sections].reverse().find(s => s.getBoundingClientRect().top + window.scrollY < midScreen - 10);
-            if (prev) {{
-                prev.scrollIntoView({{ behavior: "smooth", block: "start" }});
-            }} else {{
-                sections[sections.length - 1].scrollIntoView({{ behavior: "smooth", block: "start" }});
-            }}
+            const prev = sections[currentIndex(sections) - 1];
+            if (prev) prev.scrollIntoView({{ behavior: "smooth", block: "start" }});
         }});
+
+        window.addEventListener("scroll", updateVisibility, {{ passive: true }});
+        updateVisibility();
     }})();
     </script>
 </body>
