@@ -176,9 +176,25 @@ ul.articles { list-style: none; }
 ul.articles li {
     padding: 1rem 0;
     border-bottom: 1px solid #1e2130;
+    position: relative;
 }
 
 ul.articles li:last-child { border-bottom: none; }
+
+button.dismiss {
+    position: absolute;
+    top: 1rem;
+    right: 0;
+    background: transparent;
+    border: none;
+    color: #4b5563;
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 0 0.25rem;
+    line-height: 1;
+}
+
+button.dismiss:hover { color: #ef4444; }
 
 a.headline {
     display: flex;
@@ -326,10 +342,23 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
         if (e.key === "Enter") unlock();
     }});
 
-    // ── Read tracking ──
+    // ── Read & dismiss tracking ──
+    const feedPool = {{}};
+
     function getRead() {{
         try {{ return new Set(JSON.parse(localStorage.getItem("bf_read") || "[]")); }}
         catch(e) {{ return new Set(); }}
+    }}
+
+    function getDismissed() {{
+        try {{ return new Set(JSON.parse(localStorage.getItem("bf_dismissed") || "[]")); }}
+        catch(e) {{ return new Set(); }}
+    }}
+
+    function markDismissed(url) {{
+        const dismissed = getDismissed();
+        dismissed.add(url);
+        localStorage.setItem("bf_dismissed", JSON.stringify([...dismissed]));
     }}
 
     function todaySGT() {{
@@ -406,41 +435,50 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
         }}
     }}
 
+    function renderArticle(a) {{
+        const headline = a.link
+            ? `<a class="headline" href="${{escHtml(a.link)}}" target="_blank" rel="noopener" data-url="${{escHtml(a.link)}}">${{escHtml(a.title)}}</a>`
+            : `<span class="headline">${{escHtml(a.title)}}</span>`;
+        const dismiss = a.link
+            ? `<button class="dismiss" data-url="${{escHtml(a.link)}}" title="Dismiss">&#10005;</button>`
+            : "";
+        return `<li>
+            ${{dismiss}}
+            ${{headline}}
+            ${{a.summary ? `<p class="summary">${{escHtml(snippet(a.summary))}}</p>` : ""}}
+            ${{a.published ? `<span class="published">${{formatDate(a.published)}}</span>` : ""}}
+        </li>`;
+    }}
+
     async function loadFeed(feed) {{
-        const fid  = feed.name.replace(/\\s+/g, "-");
-        const ul   = document.querySelector("#feed-" + fid + " ul");
-        const read = getRead();
-        const seen = new Set();
+        const fid      = feed.name.replace(/\\s+/g, "-");
+        const ul       = document.querySelector("#feed-" + fid + " ul");
+        const read      = getRead();
+        const dismissed = getDismissed();
+        const seen     = new Set();
         const articles = [];
+        const pool     = [];
 
         for (const {{url, quota}} of feed.urls) {{
-            const items = await fetchUrl(url);
-            const unread = items.filter(item => !item.link || !read.has(item.link));
+            const items     = await fetchUrl(url);
+            const available = items.filter(i => !i.link || (!read.has(i.link) && !dismissed.has(i.link)));
             let count = 0;
-            for (const item of unread) {{
-                if (count >= quota) break;
+            for (const item of available) {{
                 if (item.link && seen.has(item.link)) continue;
                 seen.add(item.link);
-                articles.push(item);
-                count++;
+                if (count < quota) {{ articles.push(item); count++; }}
+                else {{ pool.push(item); }}
             }}
         }}
+
+        feedPool[feed.name] = pool;
 
         if (!articles.length) {{
             ul.innerHTML = '<li class="error-notice">Could not load feed.</li>';
             return;
         }}
 
-        ul.innerHTML = articles.map(a => {{
-            const headline = a.link
-                ? `<a class="headline" href="${{escHtml(a.link)}}" target="_blank" rel="noopener" data-url="${{escHtml(a.link)}}">${{escHtml(a.title)}}</a>`
-                : `<span class="headline">${{escHtml(a.title)}}</span>`;
-            return `<li>
-                ${{headline}}
-                ${{a.summary ? `<p class="summary">${{escHtml(snippet(a.summary))}}</p>` : ""}}
-                ${{a.published ? `<span class="published">${{formatDate(a.published)}}</span>` : ""}}
-            </li>`;
-        }}).join("");
+        ul.innerHTML = articles.map(renderArticle).join("");
     }}
 
     function updateHeader() {{
@@ -455,14 +493,33 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
     }}
 
     document.addEventListener("click", e => {{
+        // Read tick
         const a = e.target.closest("a.headline[data-url]");
-        if (!a) return;
-        markRead(a.dataset.url);
-        if (!a.querySelector(".read-tick")) {{
-            const tick = document.createElement("span");
-            tick.className = "read-tick";
-            tick.innerHTML = "&#10003;";
-            a.append(tick);
+        if (a) {{
+            markRead(a.dataset.url);
+            if (!a.querySelector(".read-tick")) {{
+                const tick = document.createElement("span");
+                tick.className = "read-tick";
+                tick.innerHTML = "&#10003;";
+                a.append(tick);
+            }}
+        }}
+
+        // Dismiss
+        const btn = e.target.closest("button.dismiss[data-url]");
+        if (btn) {{
+            e.preventDefault();
+            const url = btn.dataset.url;
+            markDismissed(url);
+            const li = btn.closest("li");
+            const ul = li?.closest("ul");
+            const feedSection = ul?.closest("section.publication");
+            const feedName = feedSection?.querySelector("h2")?.textContent;
+            li?.remove();
+            if (feedName && feedPool[feedName]?.length) {{
+                const next = feedPool[feedName].shift();
+                ul.insertAdjacentHTML("beforeend", renderArticle(next));
+            }}
         }}
     }});
 
