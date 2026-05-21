@@ -23,8 +23,9 @@ FEEDS = {
         ("https://www.straitstimes.com/news/singapore/rss.xml", None),
     ],
     "WSJ": [
-        ("https://feeds.a.dj.com/rss/RSSMarketsMain.xml", 5),
-        ("https://feeds.a.dj.com/rss/RSSOpinion.xml", 5),
+        ("https://feeds.content.dowjones.io/public/rss/RSSWorldNews",   4),
+        ("https://feeds.content.dowjones.io/public/rss/RSSMarketsMain", 4),
+        ("https://feeds.content.dowjones.io/public/rss/RSSOpinion",     2),
     ],
     "Business Times Singapore": [
         ("https://www.businesstimes.com.sg/rss/singapore", None),

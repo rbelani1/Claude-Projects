@@ -14,8 +14,9 @@ FEEDS = [
     {"name": "Bloomberg",              "urls": [{"url": "https://feeds.bloomberg.com/markets/news.rss", "quota": 10}]},
     {"name": "Straits Times Singapore","urls": [{"url": "https://www.straitstimes.com/news/singapore/rss.xml", "quota": 10}]},
     {"name": "WSJ",                    "urls": [
-        {"url": "https://feeds.a.dj.com/rss/RSSMarketsMain.xml", "quota": 5},
-        {"url": "https://feeds.a.dj.com/rss/RSSOpinion.xml",     "quota": 5},
+        {"url": "https://feeds.content.dowjones.io/public/rss/RSSWorldNews",   "quota": 4},
+        {"url": "https://feeds.content.dowjones.io/public/rss/RSSMarketsMain", "quota": 4},
+        {"url": "https://feeds.content.dowjones.io/public/rss/RSSOpinion",     "quota": 2},
     ], "todayOnly": True},
     {"name": "Business Times Singapore","urls": [
         {"url": "https://www.businesstimes.com.sg/rss/singapore",    "quota": 5},
