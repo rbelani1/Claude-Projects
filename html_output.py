@@ -582,6 +582,7 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
         }}
 
         // Collect articles and overflow pool
+        const totalQuota = quotas.reduce((s, q) => s + q, 0);
         const seen     = new Set();
         const articles = [];
         const pool     = [];
@@ -595,6 +596,15 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
                 else {{ pool.push(item); }}
             }}
         }});
+
+        // Top up to total quota from pool if per-URL quota wasn't fully used
+        while (articles.length < totalQuota && pool.length > 0) {{
+            const next = pool.shift();
+            if (!next.link || !seen.has(next.link)) {{
+                articles.push(next);
+                if (next.link) seen.add(next.link);
+            }}
+        }}
 
         feedPool[feed.name] = pool;
 
