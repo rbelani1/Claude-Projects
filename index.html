@@ -223,26 +223,32 @@ footer {
     position: fixed;
     bottom: 1.75rem;
     right: max(1rem, calc(50vw - 430px));
-    width: 2.75rem;
-    height: 2.75rem;
-    border-radius: 50%;
-    background: rgba(59, 130, 246, 0.72);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    border: 1px solid rgba(59, 130, 246, 0.45);
-    color: #fff;
-    font-size: 1.25rem;
-    line-height: 1;
+    width: 2.25rem;
+    height: 2.25rem;
+    background: transparent;
+    border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 100;
-    transition: background 0.15s, transform 0.3s;
-    box-shadow: 0 2px 12px rgba(59, 130, 246, 0.3);
+    transition: transform 0.3s, opacity 0.15s;
+    opacity: 0.75;
+    padding: 0;
 }
 
-#next-btn:hover { background: rgba(59, 130, 246, 0.92); }
+#next-btn:hover { opacity: 1; }
+
+#next-btn::before {
+    content: '';
+    display: block;
+    width: 0.65rem;
+    height: 0.65rem;
+    border-right: 2.5px solid #3b82f6;
+    border-bottom: 2.5px solid #3b82f6;
+    transform: rotate(45deg);
+    margin-top: -0.35rem;
+}
 
 #next-btn.at-end { transform: rotate(180deg); }
 
@@ -374,7 +380,7 @@ footer {
     </section>
     </main>
     <footer>The Belani Foundry</footer>
-    <button id="next-btn" title="Next section">&#8964;</button>
+    <button id="next-btn" title="Next section"></button>
 
     <script>
     const PASSWORD      = "Belani123!";
