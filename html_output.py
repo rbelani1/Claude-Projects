@@ -409,7 +409,7 @@ def write_html(feed_results=None, output_path=OUTPUT_FILE):
     <script>
     const PASSWORD      = {password_json};
     const FEEDS         = {feeds_json};
-    const PROXY         = "https://corsproxy.io/?url=";
+    const PROXY         = "https://api.allorigins.win/raw?url=";
     const SUMMARY_MAX   = 280;
     const BUSINESS_FEEDS = new Set(["Bloomberg", "WSJ", "Business Times Singapore", "The Economist", "The Mint"]);
 
